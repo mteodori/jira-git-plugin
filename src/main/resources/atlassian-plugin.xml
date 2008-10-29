@@ -1,0 +1,71 @@
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}">
+
+
+
+    <plugin-info>
+        <description>JIRA git Plugin</description>
+        <version>For JIRA 3.12</version>
+        <application-version min="3.12" max="3.12"/>
+        <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
+	    <param name="configure.url">/secure/ViewGitRepositories.jspa</param>
+    </plugin-info>
+
+    <issue-tabpanel key="git-commits-tabpanel" name="git Changes Tab Panel" class="com.xiplink.jira.git.issuetabpanels.changes.GitRevisionsTabPanel">
+        <resource type="i18n" name="i18n" location="templates.plugins.git.issuetabpanels.git_jira_plugin"/>
+        <description>Show git commits related to an issue in an issue tab panel.</description>
+        <label>git Commits</label>
+        <resource type="velocity" name="view" location="templates/plugins/git/issuetabpanels/git-commits-view.vm"/>
+    </issue-tabpanel>
+
+    <component key="gitManager" name="git Manager" class="com.xiplink.jira.git.MultipleGitRepositoryManagerImpl">
+        <interface>com.xiplink.jira.git.MultipleGitRepositoryManager</interface>
+    </component>
+
+    <project-tabpanel key="git-project-tab" name="git Commits Project Tab"
+                      class="com.xiplink.jira.git.projecttabpanels.GitProjectTabPanel">
+        <description key="git.project-tab.description"/>
+        <label key="git.project-tab.label" />
+        <!-- this is a number defining the order of all project tabs. The system panels are 10, 20, 30 and 40. -->
+        <order>50</order>
+        <!-- this template produces the HTML for the panel -->
+        <resource type="velocity" name="view" location="templates/plugins/git/projecttabpanels/git-project-tab.vm"/>
+        <!-- this property file contains i18n keys for the panel -->
+        <resource type="i18n" name="i18n" location="templates.plugins.git.projecttabpanels.git_jira_plugin"/>
+    </project-tabpanel>
+
+    <resource type="i18n" name="i18n" location="com.xiplink.jira.git.action.GitActionSupport" />
+    <web-item key="git-repositories-link" name="git repositories link on administrators page" section="system.admin/globalsettings" weight="95">
+        <label key="git.repositories" />
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+            <param name="permission">admin</param>
+        </condition>
+        <link linkId="git-repositories">/secure/ViewGitRepositories.jspa</link>
+    </web-item>
+
+    <webwork1 key="GitRepositoriesManagement" name="git repositories management" class="java.lang.Object">
+        <actions>
+            <action name="com.xiplink.jira.git.action.ViewGitRepositoriesAction" alias="ViewGitRepositories">
+                <view name="success">/templates/plugins/git/configuration/list.vm</view>
+            </action>
+            <action name="com.xiplink.jira.git.action.AddGitRepositoryAction" alias="AddGitRepository">
+                <view name="input">/templates/plugins/git/configuration/add.vm</view>
+                <view name="error">/templates/plugins/git/configuration/add.vm</view>
+                <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
+            </action>
+            <action name="com.xiplink.jira.git.action.UpdateGitRepositoryAction" alias="UpdateGitRepository">
+                <view name="input">/templates/plugins/git/configuration/edit.vm</view>
+                <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
+                <view name="error">/templates/plugins/git/configuration/edit.vm</view>
+            </action>
+            <action name="com.xiplink.jira.git.action.DeleteGitRepositoryAction" alias="DeleteGitRepository">
+							<view name="input">/templates/plugins/git/configuration/delete.vm</view>
+                            <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
+							<view name="error">/templates/plugins/git/configuration/delete.vm</view>
+            </action>
+            <action name="com.xiplink.jira.git.action.ActivateGitRepositoryAction" alias="ActivateGitRepository">
+                <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
+                <view name="success">/templates/plugins/git/configuration/activate.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+</atlassian-plugin>

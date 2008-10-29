@@ -1,0 +1,9 @@
+The majority of this code is released under a BSD license: http://www.opensource.org/licenses/bsd-license.php
+Its source is the Atlassian Subversion Jira plugin.
+This is true for all files except FileDiff.java
+
+FileDiff.java is released under the EPL: http://www.eclipse.org/legal/epl-v10.html
+This file is from egit (http://git.or.cz/gitwiki/EclipsePlugin)
+
+The intention of this release is to conform to these licenses requirements.  Please let the jira_git_plugin project
+lead know of any problems or concerns.
