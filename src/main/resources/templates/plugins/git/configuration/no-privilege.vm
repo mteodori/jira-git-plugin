@@ -1,0 +1,10 @@
+<tr>
+ 	<td colspan="2" class="formErrors">
+ 		<div class="errorArea">
+			<h4>Error</h4>
+			<ul>
+					<li>$action.getText("git.admin.privilege.required")</li>
+			</ul>
+    </div>
+   </td>
+</tr>

@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <title>$action.getText("git.repository.activate")</title>
+    <meta name="decorator" content="admin" />
+  </head>
+  <body>
+			<form onsubmit="if (this.submitted) return false; this.submitted = true; return true" name="jiraform" action="ViewGitRepositories.jspa"/>
+				<table width=100% cellpadding=10 cellspacing=0 border=0>
+					<tr>
+						<td>
+							 <table class="jiraform maxWidth">
+								 <tbody>
+									 <tr>
+										 <td class="jiraformheader">
+											 <h3 class="formtitle">$action.getText("git.repository.activate")</h3>
+										 </td>
+									 </tr>
+									 <tr>
+											<td class="jiraformheader">
+												$action.getText("git.repository.activate.description")
+											</td>
+									 </tr>
+									 #if ($action.hasAnyErrors())
+										 #foreach ($error in $action.getErrorMessages())
+											 <tr>
+												 <td bgcolor=ffcccc><pre>$error</pre></td>
+											 </tr>
+										 #end
+										 #foreach ($error in $action.errors)
+											 <tr>
+												 <td bgcolor=ffcccc><pre>$error</pre></td>
+											 </tr>
+										 #end
+									 #else
+										 <tr>
+											 <td bgcolor=ffffff>$action.getText("git.repository.activation.successful")</td>
+										 </tr>
+									 #end
+									 </tr>
+									 <tr>
+										 <td bgcolor=ffffff>&nbsp;</td>
+									 </tr>
+								 <tr>
+										 <td class="fullyCentered jiraformfooter" >
+								 <input type="submit" name="ok" value="$action.getText("admin.common.words.ok")" accesskey="S" title="Press Alt+Shift+S to submit form" class="spaced" />
+										 </td>
+									 </tr>
+								 </tbody>
+							 </table>
+						 </td>
+					 </tr>
+				 </table>
+			</form>
+  </body>
+</html>

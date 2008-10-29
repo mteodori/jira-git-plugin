@@ -1,0 +1,110 @@
+<html>
+  <head>
+    <title>$action.getText("git.repositories")</title>
+    <meta name="decorator" content="admin" />
+  </head>
+
+  <body>
+#if ($action.hasPermissions())
+    <table class="jiraform maxWidth">
+    <tbody>
+      <tr>
+        <td class="jiraformheader">
+          <h3 class="formtitle">$action.getText("git.repositories")</h3>
+        </td>
+      </tr>
+      <tr>
+        <td class="jiraformbody">
+          <p>$action.getText("git.repositories.description")</p>
+          <p>
+            <img width="8" height="8" border="0" src="/jira/images/icons/bullet_creme.gif"/>
+            <a href="AddGitRepository!default.jspa"><b>$action.getText("common.forms.add")</b></a>
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+
+  <table align=center bgcolor="bbbbbb" border="0" cellpadding="0" cellspacing="0" width=90%>
+    <tr>
+      <td>
+        <table border="0" cellpadding="3" cellspacing="1" width=100%>
+            <tr bgcolor=f0f0f0>
+              <td class="colHeaderLink">
+                <b>$action.getText("common.words.name")</b>
+              </td>
+              <td class="colHeaderLink">
+                <b>$action.getText("admin.common.words.details")</b>
+              </td>
+              <td class="colHeaderLink">
+                <b>$action.getText("common.words.operations")</b>
+              </td>
+            </tr>
+
+            #foreach ($repo in $action.getRepositories())
+            #if ($velocityCount % 2 == 1)
+              #set ($rowbgcolor = "ffffff")
+            #else
+              #set ($rowbgcolor = "fffff0")
+            #end
+            <tr bgcolor="$rowbgcolor">
+
+                <td valign=top>
+                    <b>$repo.getDisplayName()</b>
+                </td>
+                <td valign=top>
+                    <b>$action.getText("git.repository.root")</b>: $repo.getRoot()<br>
+                    <b>$action.getText("git.repository.status")</b>: #if ($repo.isActive()) $action.getText("admin.common.words.active") #else $action.getText("admin.common.words.inactive") ($repo.getInactiveMessage()) #end<br>
+                    #if ($repo.isWebLinking())
+                      <br><b>$action.getText("admin.cvsmodules.viewcvs.root.param")</b>: $repo.getWebLink()
+                    #end
+                    #if ($repo.getViewLinkFormat())
+                      #if ($repo.getViewLinkFormat().getCopyFromFormat())
+                      <br><b>$action.getText("git.linkformat.path")</b>: $repo.getViewLinkFormat().getCopyFromFormat()
+                      #end
+                      #if ($repo.getViewLinkFormat().getChangesetFormat())
+                      <br><b>$action.getText("git.linkformat.changeset")</b>: $repo.getViewLinkFormat().getChangesetFormat()
+                      #end
+                      #if ($repo.getViewLinkFormat().getFileAddedFormat())
+                      <br><b>$action.getText("git.linkformat.file.added")</b>: $repo.getViewLinkFormat().getFileAddedFormat()
+                      #end
+                      #if ($repo.getViewLinkFormat().getFileModifiedFormat())
+                      <br><b>$action.getText("git.linkformat.file.modified")</b>: $repo.getViewLinkFormat().getFileModifiedFormat()
+                      #end
+                      #if ($repo.getViewLinkFormat().getFileReplacedFormat())
+                      <br><b>$action.getText("git.linkformat.file.replaced")</b>: $repo.getViewLinkFormat().getFileReplacedFormat()
+                      #end
+                      #if ($repo.getViewLinkFormat().getFileDeletedFormat())
+                      <br><b>$action.getText("git.linkformat.file.deleted")</b>: $repo.getViewLinkFormat().getFileDeletedFormat()
+                      #end
+                    #end
+                </td>
+
+                <td valign=top align=left>
+                    <a href="UpdateGitRepository!default.jspa?repoId=$repo.getId()">$action.getText("common.words.edit")</a>
+                    #if (!$repo.isActive())
+                    | <a href="ActivateGitRepository.jspa?repoId=$repo.getId()">$action.getText("admin.common.words.activate")</a>
+                    #end
+                    | <a href="DeleteGitRepository!default.jspa?repoId=$repo.getId()">$action.getText("common.words.delete")</a>
+                </td>
+            </tr>
+            #end
+            #if ($action.getRepositories().size() == 0)
+                <tr>
+                    <td colspan=4 bgcolor=ffffff>
+                        $action.getText("git.no.repositories.configured")
+                    </td>
+                </tr>
+            #end
+        </table>
+    </td></tr></table>
+
+</p>
+
+#else
+	#parse("templates/plugins/git/configuration/no-privilege.vm")
+#end
+
+</body>
+</html>

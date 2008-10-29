@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>$action.getText("git.add.repository")</title>
+    <meta name="decorator" content="admin" />
+  </head>
+  <body>
+			<form onsubmit="if (this.submitted) return false; this.submitted = true; return true" name="jiraform" method="post" action="AddGitRepository.jspa"/>
+				<table width=100% cellpadding=10 cellspacing=0 border=0>
+					<tr>
+						<td>
+							 <table class="jiraform maxWidth">
+								 <tbody>
+									 <tr>
+										 <td class="jiraformheader" colspan="2">
+											 <h3 class="formtitle">$action.getText("git.add.repository")</h3>
+										 </td>
+									 </tr>
+									 <tr>
+										 <td class="jiraformheader" colspan="2">
+											 Use this page to add a new git repository.
+										</td>
+									 </tr>
+									 #if ($action.hasAnyErrors())
+									 <tr>
+										 <td colspan="2" class="formErrors">
+											 <div class="errorArea">
+												 <h4>Errors</h4>
+												 <ul>
+													 #foreach ($error in $action.getErrorMessages())
+														 <li>$error</li>
+													 #end
+													 #foreach ($error in $action.errors)
+														 <li>$error</li>
+													 #end
+												 </ul>
+											 </div>
+										 </td>
+									 </tr>
+									 #end
+									 #parse("templates/plugins/git/configuration/properties.vm")
+								 <tr>
+										 <td colspan="2" class="fullyCentered jiraformfooter" >
+								 <input type="submit" name="add" value="$action.getText("common.forms.add")" accesskey="S" title="Press Alt+Shift+S to submit form" class="spaced" />
+											 <input id="cancelButton"  type="button" accesskey="`" title="Cancel (Alt+Shift + `)" name="ViewGitRepositories.jspa" value="Cancel" onclick="location.href='ViewGitRepositories.jspa'" />
+										 </td>
+									 </tr>
+								 </tbody>
+							 </table>
+						 </td>
+					 </tr>
+				 </table>
+			</form>
+  </body>
+</html>

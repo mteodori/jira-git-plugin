@@ -1,0 +1,45 @@
+<table cellpadding="2" cellspacing="0" border="0" width="100%">
+<tr>
+    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.repository")</b></td>
+    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.revision")</b></td>
+    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.date")</b></td>
+    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.user")</b></td>
+    <td bgcolor="#f0f0f0"><b>$i18n.getText("git.issue-tab.message")</b></td>
+</tr>
+<tr>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.repositoryDisplayName</td>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.linkRenderer.getRevisionLink($git.revision)</td>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.timePerformed</td>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!{git.revision.authorIdent.name} / $!{git.revision.committerIdent.name}</td>
+    <td bgcolor="#ffffff">#makelinkedhtml($git.revision.getFullMessage().trim())</td>
+</tr>
+<tr>
+    <td bgcolor="#f0f0f0"><b>$i18n.getText("git.issue-tab.files-changed")</b></td>
+</tr>
+<tr>
+    <td bgcolor="#ffffff">
+            #foreach ($changePath in $git.changedPaths)
+                #if ($git.isDeleted($changePath) == true)
+                    <font color="#990000" size="-2"><b title="Delete">$i18n.getText("git.issue-tab.deleted")</b></font>
+                #elseif ($git.isAdded($changePath) == true)
+                    <font color="#009900" size="-2"><b title="Add">$i18n.getText("git.issue-tab.added")</b></font>
+                #elseif ($git.isModified($changePath) == true)
+                    <font color="#999933" size="-2"><b title="Modify">$i18n.getText("git.issue-tab.modified")</b></font>
+                #elseif ($git.isReplaced($changePath) == true)
+                    <font color="#999933" size="-2"><b title="Replace">$i18n.getText("git.issue-tab.replaced")</b></font>
+                #else
+                    $changePath.change
+                #end
+                $git.linkRenderer.getChangePathLink($git.revision, $changePath)
+
+                #if ($changePath.copyPath)
+                    (from $git.linkRenderer.getCopySrcLink($git.revision, $changePath))
+                #end
+
+                <br>
+            #end
+    </td>
+</tr>
+</table>
+
+<br>
