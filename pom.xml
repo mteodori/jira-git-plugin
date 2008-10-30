@@ -13,7 +13,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira_git_plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
 
     <name>Git JIRA plugin</name>
     <packaging>atlassian-plugin</packaging>
@@ -31,9 +31,7 @@
 
     <!-- TODO: Add project description -->
     <description>Git Jira plugin</description>
-    <!--
-	<url></url>
-    -->
+	<url>http://confluence.atlassian.com/display/JIRAEXT/Jira+Git+Plugin</url>
 
 
 <dependencies>
@@ -41,32 +39,39 @@
       <groupId>cz.or.git</groupId>
       <artifactId>jgit</artifactId>
       <version>0.1-SNAPSHOT</version>
-      <!-- <scope>test</scope>-->
+      <!-- jgit is not in a repository (yet?) -->
     </dependency>
   </dependencies>
 
 
 
-
-
-    <!-- TODO: Complete developer details -->
-    <!--
 	<developers>
 		<developer>
-			<name>John Smith</name>
-			<organization>Example Company</organization>
+			<name>J. Longman</name>
+			<organization>XipLink, Inc.</organization>
 		</developer>
 	</developers>
-	-->
 
-    <!-- TODO: Complete source control details -->
-    <!--
     <scm>
-		<connection></connection>
-		<developerConnection></developerConnection>
+		<connection>scm:svn:http://svn.atlassian.com/svn/public/contrib/jira</connection>
+		<developerConnection>scm:svn:https://svn.atlassian.com/svn/public/contrib/jira</developerConnection>
 		<url></url>
 	</scm>
-	-->
+
+<distributionManagement>
+    <repository>
+        <id>atlassian-contrib</id>
+        <name>Atlassian Contrib Repository</name>
+        <url>dav:https://maven.atlassian.com/contrib</url>
+    </repository>
+    <snapshotRepository>
+        <id>atlassian-contrib-snapshot</id>
+        <name>Atlassian Contrib Snapshot Repository</name>
+        <url>dav:https://maven.atlassian.com/contrib-snapshot</url>
+    </snapshotRepository>
+</distributionManagement>
+
+
 
     
     <build>
