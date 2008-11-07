@@ -10,8 +10,8 @@ import static org.spearce.jgit.lib.Constants.R_REMOTES;
 import static org.spearce.jgit.lib.Constants.R_TAGS;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,8 +23,6 @@ import org.apache.log4j.Logger;
 import org.spearce.jgit.errors.CorruptObjectException;
 import org.spearce.jgit.errors.IncorrectObjectTypeException;
 import org.spearce.jgit.errors.MissingObjectException;
-import org.spearce.jgit.errors.NotSupportedException;
-import org.spearce.jgit.errors.TransportException;
 import org.spearce.jgit.lib.AnyObjectId;
 import org.spearce.jgit.lib.Constants;
 import org.spearce.jgit.lib.ObjectId;
@@ -82,8 +80,7 @@ public class GitManagerImpl implements GitManager {
 		isViewLinkSet = false; /* If we don't reset this flag, we get svn-190 */
 
 		setup();
-		
-		
+
 	}
 
 	protected void setup() {
@@ -119,6 +116,7 @@ public class GitManagerImpl implements GitManager {
 		}
 
 		try {
+			repository.scanForRepoChanges();
 			final ObjectId latestRevision = repository.resolve(Constants.HEAD);
 
 			if (log.isDebugEnabled()) {
@@ -127,21 +125,27 @@ public class GitManagerImpl implements GitManager {
 			ObjectId retrieveStart = repository.resolve(revision);
 
 			RevWalk walk = new RevWalk(repository);
+
+			if (retrieveStart != null) {
+				try {
+					RevCommit last = walk.parseCommit(retrieveStart);
+					walk.markStart(last);
+					if (log.isDebugEnabled()) {
+						log.debug("Walking in repository=" + getRoot() + " from : " + latestRevision + " to "
+								+ retrieveStart.name());
+					}
+				} catch (Exception e) {
+					log.error("Couldn't parseCommit retrieveStart: " + retrieveStart);
+					throw e;
+				}
+			}
+
 			try {
 				RevCommit head = walk.parseCommit(latestRevision);
 				walk.markStart(head);
 			} catch (Exception e) {
 				log.error("Couldn't parseCommit latestRevision: " + latestRevision);
 				throw e;
-			}
-			if (retrieveStart != null) {
-				try {
-					RevCommit last = walk.parseCommit(retrieveStart);
-					walk.markStart(last);
-				} catch (Exception e) {
-					log.error("Couldn't parseCommit retrieveStart: " + retrieveStart);
-					throw e;
-				}
 			}
 
 			for (final RevCommit logEntry : walk) {
@@ -168,8 +172,8 @@ public class GitManagerImpl implements GitManager {
 
 			if (log.isDebugEnabled()) {
 				log.debug("Retrieved " + logEntries.size() + " relevant revisions to index (between "
-						+ (retrieveStart == null ? "origin" : retrieveStart) + " and " + latestRevision
-						+ ") from repository=" + getRoot());
+						+ (retrieveStart == null ? "origin" : retrieveStart) + " and "
+						+ (latestRevision != null ? latestRevision : "null") + ") from repository=" + getRoot());
 			}
 		} catch (Exception e) {
 			log.error("Error retrieving changes from the repository.", e);
@@ -235,21 +239,13 @@ public class GitManagerImpl implements GitManager {
 				.getString(MultipleGitRepositoryManager.GIT_REPOSITORY_NAME);
 	}
 
+	public String getOrigin()
+	{
+		return properties.getString(MultipleGitRepositoryManager.GIT_ORIGIN_KEY);
+	}
+	
 	public String getRoot() {
 		return properties.getString(MultipleGitRepositoryManager.GIT_ROOT_KEY);
-	}
-
-	public String getUsername() {
-		return properties.getString(MultipleGitRepositoryManager.GIT_USERNAME_KEY);
-	}
-
-	public String getPassword() {
-		try {
-			return decryptPassword(properties.getString(MultipleGitRepositoryManager.GIT_PASSWORD_KEY));
-		} catch (IOException e) {
-			log.error("Couldn't decrypt the password. Reseting it to null.", e);
-			return null;
-		}
 	}
 
 	public boolean isRevisionIndexing() {
@@ -258,10 +254,6 @@ public class GitManagerImpl implements GitManager {
 
 	public int getRevisioningCacheSize() {
 		return properties.getInt(MultipleGitRepositoryManager.GIT_REVISION_CACHE_SIZE_KEY);
-	}
-
-	public String getPrivateKeyFile() {
-		return properties.getString(MultipleGitRepositoryManager.GIT_PRIVATE_KEY_FILE);
 	}
 
 	public boolean isActive() {
@@ -281,6 +273,19 @@ public class GitManagerImpl implements GitManager {
 			if (gitDir.isDirectory())
 				return gitDir;
 			current = current.getParentFile();
+		}
+		// see if it is a bare repository
+		File bareDirectory = new File(root + ".git");
+		if (bareDirectory.exists()) {
+			String[] list = bareDirectory.list(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return "config".equals(name);
+				}
+			});
+
+			if (list.length > 0) {
+				return bareDirectory;
+			}
 		}
 		return null;
 	}
@@ -382,7 +387,7 @@ public class GitManagerImpl implements GitManager {
 			argWalk.sort(RevSort.COMMIT_TIME_DESC, true);
 			argWalk.sort(RevSort.BOUNDARY, true);
 
-			AnyObjectId headId = repository.resolve("HEAD");
+			AnyObjectId headId = repository.resolve(Constants.HEAD);
 			RevCommit headCommit = argWalk.parseCommit(headId);
 			RevCommit entry = argWalk.parseCommit(repository.resolve(revision));
 
@@ -422,6 +427,110 @@ public class GitManagerImpl implements GitManager {
 	}
 
 	public void fetch() {
-		log.warn("Fetch not implemented...");}
-	
+
+		try {
+			Transport tn = Transport.open(repository, getOrigin());
+			final FetchResult r;
+			List<RefSpec> toget = new ArrayList<RefSpec>();
+			toget.add(new RefSpec("refs/heads/*:refs/heads/*"));
+			try {
+				r = tn.fetch(new TextProgressMonitor(), toget);
+
+				if (r.getTrackingRefUpdates().isEmpty()) {
+					if (log.isDebugEnabled())
+						log.debug("No updates");
+					return;
+				}
+			} finally {
+				tn.close();
+			}
+
+			boolean shownURI = false;
+			for (final TrackingRefUpdate u : r.getTrackingRefUpdates()) {
+				// if (//!verbose &&
+				// u.getResult() == RefUpdate.Result.NO_CHANGE)
+				// continue;
+
+				final char type = shortTypeOf(u.getResult());
+				final String longType = longTypeOf(u);
+				final String src = abbreviateRef(u.getRemoteName(), false);
+				final String dst = abbreviateRef(u.getLocalName(), true);
+
+				if (!shownURI) {
+					shownURI = true;
+				}
+
+				if (log.isDebugEnabled())
+					log.debug(String.format(" %c %-17s %-10s -> %s", type, longType, src, dst));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			log.warn("", e);
+		}
+
+	}
+
+	private String longTypeOf(final TrackingRefUpdate u) {
+		final RefUpdate.Result r = u.getResult();
+		if (r == RefUpdate.Result.LOCK_FAILURE)
+			return "[lock fail]";
+
+		if (r == RefUpdate.Result.IO_FAILURE)
+			return "[i/o error]";
+
+		if (r == RefUpdate.Result.NEW) {
+			if (u.getRemoteName().startsWith(Constants.R_HEADS))
+				return "[new branch]";
+			else if (u.getLocalName().startsWith(Constants.R_TAGS))
+				return "[new tag]";
+			return "[new]";
+		}
+
+		if (r == RefUpdate.Result.FORCED) {
+			final String aOld = u.getOldObjectId().abbreviate(repository);
+			final String aNew = u.getNewObjectId().abbreviate(repository);
+			return aOld + "..." + aNew;
+		}
+
+		if (r == RefUpdate.Result.FAST_FORWARD) {
+			final String aOld = u.getOldObjectId().abbreviate(repository);
+			final String aNew = u.getNewObjectId().abbreviate(repository);
+			return aOld + ".." + aNew;
+		}
+
+		if (r == RefUpdate.Result.REJECTED)
+			return "[rejected]";
+		if (r == RefUpdate.Result.NO_CHANGE)
+			return "[up to date]";
+		return "[" + r.name() + "]";
+	}
+
+	private static char shortTypeOf(final RefUpdate.Result r) {
+		if (r == RefUpdate.Result.LOCK_FAILURE)
+			return '!';
+		if (r == RefUpdate.Result.IO_FAILURE)
+			return '!';
+		if (r == RefUpdate.Result.NEW)
+			return '*';
+		if (r == RefUpdate.Result.FORCED)
+			return '+';
+		if (r == RefUpdate.Result.FAST_FORWARD)
+			return ' ';
+		if (r == RefUpdate.Result.REJECTED)
+			return '!';
+		if (r == RefUpdate.Result.NO_CHANGE)
+			return '=';
+		return ' ';
+	}
+
+	protected String abbreviateRef(String dst, boolean abbreviateRemote) {
+		if (dst.startsWith(R_HEADS))
+			return dst.substring(R_HEADS.length());
+		else if (dst.startsWith(R_TAGS))
+			return dst.substring(R_TAGS.length());
+		else if (abbreviateRemote && dst.startsWith(R_REMOTES))
+			return dst.substring(R_REMOTES.length());
+		return dst;
+	}
+
 }

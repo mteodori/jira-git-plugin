@@ -10,10 +10,8 @@ import com.xiplink.jira.git.revisions.RevisionIndexer;
  */
 public interface MultipleGitRepositoryManager extends Startable {
 	String GIT_ROOT_KEY = "git.root";
+	String GIT_ORIGIN_KEY = "git.origin";
 	String GIT_REPOSITORY_NAME = "git.display.name";
-	String GIT_USERNAME_KEY = "git.username";
-	String GIT_PASSWORD_KEY = "git.password";
-	String GIT_PRIVATE_KEY_FILE = "git.privatekeyfile";
 	String GIT_REVISION_INDEXING_KEY = "revision.indexing";
 	String GIT_REVISION_CACHE_SIZE_KEY = "revision.cache.size";
 

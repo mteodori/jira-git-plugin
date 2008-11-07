@@ -6,10 +6,8 @@ import com.xiplink.jira.git.MultipleGitRepositoryManager;
 
 public class AddGitRepositoryAction extends GitActionSupport implements GProperties {
 	private String root;
+	private String origin;
 	private String displayName;
-	private String username;
-	private String password;
-	private String privateKeyFile;
 	private Boolean revisionIndexing = Boolean.TRUE;
 	private Integer revisionCacheSize = new Integer(10000);
     private String webLinkType;
@@ -48,27 +46,11 @@ public class AddGitRepositoryAction extends GitActionSupport implements GPropert
 		this.displayName = displayName;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		if (TextUtils.stringSet(username)) {
-			this.username = username;
+	public void setOrigin(String origin) {
+		if (TextUtils.stringSet(origin)) {
+			this.origin = origin;
 		} else {
-			this.username = null;
-		}
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		if (TextUtils.stringSet(password)) {
-			this.password = password;
-		} else {
-			this.password = null;
+			this.origin = null;
 		}
 	}
 
@@ -86,18 +68,6 @@ public class AddGitRepositoryAction extends GitActionSupport implements GPropert
 
 	public void setRevisionCacheSize(Integer revisionCacheSize) {
 		this.revisionCacheSize = revisionCacheSize;
-	}
-
-	public String getPrivateKeyFile() {
-		return privateKeyFile;
-	}
-
-	public void setPrivateKeyFile(String privateKeyFile) {
-		if (TextUtils.stringSet(privateKeyFile)) {
-			this.privateKeyFile = privateKeyFile;
-		} else {
-			this.privateKeyFile = null;
-		}
 	}
 
     public String getWebLinkType() {
@@ -202,7 +172,13 @@ public class AddGitRepositoryAction extends GitActionSupport implements GPropert
 		if (!TextUtils.stringSet(getDisplayName()))
 			addError("displayName", getText("git.errors.you.must.specify.a.name.for.the.repository"));
 		if (!TextUtils.stringSet(getRoot()))
-			addError("root", getText("admin.errors.you.must.specify.the.root.of.the.repository"));
+			addError("root", getText("git.errors.you.must.specify.the.root.of.the.repository"));
+		if (!TextUtils.stringSet(getOrigin()))
+			addError("origin", getText("git.errors.you.must.specify.the.origin.of.the.repository"));
+	}
+
+	public String getOrigin() {
+		return origin;
 	}
 
 }

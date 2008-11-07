@@ -13,7 +13,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira_git_plugin</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
 
     <name>Git JIRA plugin</name>
     <packaging>atlassian-plugin</packaging>
@@ -41,6 +41,11 @@
       <version>0.1-SNAPSHOT</version>
       <!-- jgit is not in a repository (yet?) -->
     </dependency>
+<dependency>
+<groupId>com.jcraft</groupId>
+  <artifactId>jsch</artifactId>
+  <version>0.1.37</version>
+</dependency>
   </dependencies>
 
 

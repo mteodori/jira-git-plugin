@@ -1,36 +1,23 @@
 package com.xiplink.jira.git;
 
 /**
- * User: detkin
- * Date: 27/05/2005
- * Time: 13:11:18
+ * User: detkin Date: 27/05/2005 Time: 13:11:18
  */
 public class GitProperties implements GProperties {
+	private String origin;
 	private String root;
 	private String displayName;
-	private String username;
-	private String password;
 	private Boolean revisionIndexing;
 	private Integer revisioningCacheSize;
-	private String privateKeyFile;
 	private String changeSetFormat;
-    private String webLinkType;
-    private String viewFormat;
+	private String webLinkType;
+	private String viewFormat;
 	private String fileAddedFormat;
 	private String fileDeletedFormat;
 	private String fileModifiedFormat;
 	private String fileReplacedFormat;
 
-    public void fillPropertiesFromOther(GitProperties other) {
-		if (this.getUsername() == null) {
-			this.username = other.getUsername();
-		}
-		if (this.getPassword() == null) {
-			this.password = other.getPassword();
-		}
-		if (this.getPrivateKeyFile() == null) {
-			this.privateKeyFile = other.getPrivateKeyFile();
-		}
+	public void fillPropertiesFromOther(GitProperties other) {
 		if (this.getRevisionIndexing() == null) {
 			this.revisionIndexing = other.getRevisionIndexing();
 		}
@@ -38,10 +25,14 @@ public class GitProperties implements GProperties {
 			this.revisioningCacheSize = other.getRevisionCacheSize();
 		}
 
-        if (webLinkType == null)
-            setWebLinkType(other.getWebLinkType());
+		if (origin == null) {
+			setOrigin(other.getOrigin());
+		}
 
-        if (changeSetFormat == null)
+		if (webLinkType == null)
+			setWebLinkType(other.getWebLinkType());
+
+		if (changeSetFormat == null)
 			setChangeSetFormat(other.getChangesetFormat());
 
 		if (viewFormat == null)
@@ -60,32 +51,29 @@ public class GitProperties implements GProperties {
 			setFileReplacedFormat(other.getFileReplacedFormat());
 	}
 
-    public String getWebLinkType() {
-        return webLinkType;
-    }
+	public String getWebLinkType() {
+		return webLinkType;
+	}
 
-    public void setWebLinkType(String webLinkType) {
-        this.webLinkType = webLinkType;
-    }
+	public void setWebLinkType(String webLinkType) {
+		this.webLinkType = webLinkType;
+	}
 
-    public String toString() {
-		return "username: " + getUsername() + " password: " + getPassword() + " privateKeyFile: " + getPrivateKeyFile() + " revisioningIndex: " + getRevisionIndexing() + " revisioningCacheSize: " + getRevisionCacheSize();
+	public String toString() {
+		return "origin: " + origin + "  revisioningIndex: " + getRevisionIndexing() + " revisioningCacheSize: "
+				+ getRevisionCacheSize();
 	}
 
 	public String getRoot() {
 		return root;
 	}
 
+	public String getOrigin() {
+		return origin;
+	}
+
 	public String getDisplayName() {
 		return displayName;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
 	}
 
 	public Boolean getRevisionIndexing() {
@@ -94,10 +82,6 @@ public class GitProperties implements GProperties {
 
 	public Integer getRevisionCacheSize() {
 		return revisioningCacheSize;
-	}
-
-	public String getPrivateKeyFile() {
-		return privateKeyFile;
 	}
 
 	public String getChangesetFormat() {
@@ -134,16 +118,6 @@ public class GitProperties implements GProperties {
 		return this;
 	}
 
-	public GitProperties setUsername(String username) {
-		this.username = username;
-		return this;
-	}
-
-	public GitProperties setPassword(String password) {
-		this.password = password;
-		return this;
-	}
-
 	public GitProperties setRevisionIndexing(Boolean revisionIndexing) {
 		this.revisionIndexing = revisionIndexing;
 		return this;
@@ -151,11 +125,6 @@ public class GitProperties implements GProperties {
 
 	public GitProperties setRevisioningCacheSize(Integer revisioningCacheSize) {
 		this.revisioningCacheSize = revisioningCacheSize;
-		return this;
-	}
-
-	public GitProperties setPrivateKeyFile(String privateKeyFile) {
-		this.privateKeyFile = privateKeyFile;
 		return this;
 	}
 
@@ -186,6 +155,11 @@ public class GitProperties implements GProperties {
 
 	public GitProperties setFileReplacedFormat(String fileReplacedFormat) {
 		this.fileReplacedFormat = fileReplacedFormat;
+		return this;
+	}
+
+	public GitProperties setOrigin(String gitOriginStr) {
+		this.origin = gitOriginStr;
 		return this;
 	}
 

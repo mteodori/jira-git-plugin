@@ -61,6 +61,7 @@ public class GPropertiesLoader {
 
 		if (props.containsKey(MultipleGitRepositoryManager.GIT_ROOT_KEY + indexStr)) {
 			final String gitRootStr = props.getProperty(MultipleGitRepositoryManager.GIT_ROOT_KEY + indexStr);
+			final String gitOriginStr = props.getProperty(MultipleGitRepositoryManager.GIT_ORIGIN_KEY + indexStr);
 			final String displayName = props.getProperty(MultipleGitRepositoryManager.GIT_REPOSITORY_NAME + indexStr);
 
 //			final String linkPathFormat = props.getProperty(MultipleGitRepositoryManager.git_LINKFORMAT_PATH_KEY
@@ -76,10 +77,6 @@ public class GPropertiesLoader {
 			final String fileDeletedFormat = props.getProperty(MultipleGitRepositoryManager.GIT_LINKFORMAT_FILE_DELETED
 					+ indexStr);
 
-			final String username = props.getProperty(MultipleGitRepositoryManager.GIT_USERNAME_KEY + indexStr);
-			final String password = props.getProperty(MultipleGitRepositoryManager.GIT_PASSWORD_KEY + indexStr);
-			final String privateKeyFile = props.getProperty(MultipleGitRepositoryManager.GIT_PRIVATE_KEY_FILE
-					+ indexStr);
 			Boolean revisionIndexing = null;
 			if (props.containsKey(MultipleGitRepositoryManager.GIT_REVISION_INDEXING_KEY + indexStr)) {
 				revisionIndexing = Boolean.valueOf("true".equalsIgnoreCase(props
@@ -91,10 +88,9 @@ public class GPropertiesLoader {
 						.getProperty(MultipleGitRepositoryManager.GIT_REVISION_CACHE_SIZE_KEY + indexStr));
 			}
 
-			return new GitProperties().setRoot(gitRootStr).setDisplayName(displayName).setChangeSetFormat(
+			return new GitProperties().setRoot(gitRootStr).setOrigin(gitOriginStr).setDisplayName(displayName).setChangeSetFormat(
 					changesetFormat).setFileAddedFormat(fileAddedFormat).setFileModifiedFormat(fileModifiedFormat)
-					.setFileReplacedFormat(fileReplacedFormat).setFileDeletedFormat(fileDeletedFormat).setUsername(
-							username).setPassword(password).setPrivateKeyFile(privateKeyFile).setRevisionIndexing(
+					.setFileReplacedFormat(fileReplacedFormat).setFileDeletedFormat(fileDeletedFormat).setRevisionIndexing(
 							revisionIndexing).setRevisioningCacheSize(revisionCacheSize);
 
 		} else {

@@ -19,14 +19,13 @@ public interface GitManager {
 	long getId();
 	String getDisplayName();
 	String getRoot();
-	String getUsername();
-	String getPassword();
+	String getOrigin();
 	boolean isActive();
 	String getInactiveMessage();
 	void activate();
 	boolean isRevisionIndexing();
 	int getRevisioningCacheSize();
-	String getPrivateKeyFile();
+	
     ViewLinkFormat getViewLinkFormat();
 	GitLinkRenderer getLinkRenderer();
 	void update(GProperties properties);

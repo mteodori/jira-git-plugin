@@ -55,6 +55,7 @@
                 </td>
                 <td valign=top>
                     <b>$action.getText("git.repository.root")</b>: $repo.getRoot()<br>
+                    <b>$action.getText("git.repository.origin")</b>: $repo.getOrigin()<br>
                     <b>$action.getText("git.repository.status")</b>: #if ($repo.isActive()) $action.getText("admin.common.words.active") #else $action.getText("admin.common.words.inactive") ($repo.getInactiveMessage()) #end<br>
                     #if ($repo.isWebLinking())
                       <br><b>$action.getText("admin.cvsmodules.viewcvs.root.param")</b>: $repo.getWebLink()

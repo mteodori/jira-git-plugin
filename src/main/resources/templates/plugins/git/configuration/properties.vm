@@ -10,6 +10,10 @@
 <input type="text" id="root" name="root" #if ($root) value="$root" #end size="60" />
 #controlFooter($action $action.getText("git.repository.root.description") $displayParameter.noHeader)
 
+#controlHeader($action 'origin' $action.getText("git.repository.origin") true $displayParameters.noHeader)
+<input type="text" id="origin" name="origin" #if ($origin) value="$origin" #end size="60" />
+#controlFooter($action $action.getText("git.repository.origin.description") $displayParameter.noHeader)
+
 #controlHeader($action 'revisionIndexing' $action.getText("git.repository.revision.indexing") true $displayParameters.noHeader)
 <input id="revisionIndexingTrue" type="radio" value="true" name="revisionIndexing" #if ($revisionIndexing) checked="checked" #end><label for="revisionIndexingTrue">$action.getText("git.repository.revision.indexing.enabled")</label>
 &nbsp;
@@ -19,18 +23,6 @@
 #controlHeader($action 'revisionCacheSize' $action.getText("git.repository.revision.cache.size") true $displayParameters.noHeader)
 <input type="text" id="revisionCacheSize" name="revisionCacheSize" #if ($revisionCacheSize) value="$revisionCacheSize" #end />
 #controlFooter($action $action.getText("git.repository.revision.cache.size.description") $displayParameters.noHeader)
-
-#controlHeader($action 'username' $action.getText("git.repository.username") false $displayParameters.noHeader)
-<input type="text" id="username" name="username" #if ($username) value="$username" #end />
-#controlFooter($action '' $displayParameters.noHeader)
-
-#controlHeader($action 'password' $action.getText("git.repository.password") false $displayParameters.noHeader)
-<input type="password" id="password" name="password" #if ($password) value="$password" #end />
-#controlFooter($action '' $displayParameters.noHeader)
-
-#controlHeader($action 'privateKeyFile' $action.getText("git.repository.private.key.file") false $displayParameters.noHeader)
-<input type="text" id="privateKeyFile" name="privateKeyFile" #if ($privateKeyFile) value="$privateKeyFile" #end size="60" />
-#controlFooter($action $action.getText("git.repository.private.key.file.description") $displayParameters.noHeader)
 
 <tr>
     <td colspan=2 bgcolor=f0f0f0><b>$action.getText("git.repository.web.linking")</b></td>
@@ -48,11 +40,11 @@
         webLinkTypes["$webLinkType.key"]["fileDeletedFormat"] = "$webLinkType.fileDeletedFormat";
     #end
 
-    function getHost(root)
+    function getHost(origin)
     {
-        var start = root.indexOf("://") + 3;
-        var end = root.indexOf("/", start);
-        return "http://" + root.substring(start, end);
+        var start = origin.indexOf("://") + 3;
+        var end = origin.indexOf("/", start);
+        return "http://" + origin.substring(start, end);
     }
 
     function setWebLinkFormat(linkType, selectedType)
@@ -60,7 +52,7 @@
         if (selectedType)
         {
             var webLink = webLinkTypes[selectedType][linkType];
-            webLink = webLink.replace("\${root}", getHost(document.getElementById("root").value));
+            webLink = webLink.replace("\${origin}", getHost(document.getElementById("origin").value));
             document.getElementById(linkType).value = webLink;
         }
         else

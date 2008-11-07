@@ -36,6 +36,7 @@ public class UpdateGitRepositoryAction extends AddGitRepositoryAction {
 
 		this.setDisplayName(repository.getDisplayName());
 		this.setRoot(repository.getRoot());
+		this.setOrigin(repository.getOrigin());
 		if (repository.getViewLinkFormat() != null) {
             this.setWebLinkType(repository.getViewLinkFormat().getType());
             this.setChangesetFormat(repository.getViewLinkFormat().getChangesetFormat());
@@ -45,9 +46,6 @@ public class UpdateGitRepositoryAction extends AddGitRepositoryAction {
 			this.setFileModifiedFormat(repository.getViewLinkFormat().getFileModifiedFormat());
 			this.setFileReplacedFormat(repository.getViewLinkFormat().getFileReplacedFormat());
 		}
-		this.setUsername(repository.getUsername());
-		this.setPassword(repository.getPassword());
-		this.setPrivateKeyFile(repository.getPrivateKeyFile());
 		this.setRevisionCacheSize(new Integer(repository.getRevisioningCacheSize()));
 		this.setRevisionIndexing(new Boolean(repository.isRevisionIndexing()));
 

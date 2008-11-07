@@ -59,7 +59,7 @@ import java.util.Collections;
 
 public class RevisionIndexer {
 	private static Logger log = Logger.getLogger(RevisionIndexer.class);
-	private static final String NOT_INDEXED = "origin";
+	private static final String NOT_INDEXED = "not-indexed";
 
 	private static final String REVISIONS_INDEX_DIRECTORY = "plugins" + System.getProperty("file.separator")
 			+ "jira-git-revisions";
@@ -217,39 +217,36 @@ public class RevisionIndexer {
 						}
 					}
 
-					
-					
 					long repoId = gitManager.getId();
-					
-					
-					
+
 					String latestIndexedRevision = "";
+					{
 
-					if (getLatestIndexedRevision(repoId) != null) {
-						latestIndexedRevision = getLatestIndexedRevision(repoId);
-					} else {
-						// no latestIndexedRevision, no need to update? This probably means that the repository have
-						// been removed from the file system
-						log.warn("Did not update index because null value in hash table for " + repoId);
-						continue;
+						String latestReportedIndexRevision = getLatestIndexedRevision(repoId);
+						if (latestReportedIndexRevision != null) {
+							latestIndexedRevision = latestReportedIndexRevision;
+						} else {
+							// no latestIndexedRevision, no need to update? This probably means that the repository have
+							// been removed from the file system
+							log.warn("Did not update index because null value in hash table for " + repoId);
+							continue;
+						}
+
+						if (log.isDebugEnabled()) {
+							log.debug("Updating revision index for repository=" + repoId);
+						}
+
+						if (latestIndexedRevision == null || "".equals(latestIndexedRevision)) {
+							latestIndexedRevision = updateLastRevisionIndexed(repoId);
+						}
+					}
+					// if (log.isDebugEnabled())
+					{
+						log.warn("Latest indexed revision for repository=" + repoId + " is : " + latestIndexedRevision);
 					}
 
-					if (log.isDebugEnabled()) {
-						log.debug("Updating revision index for repository=" + repoId);
-					}
-
-					if (latestIndexedRevision == null || "".equals(latestIndexedRevision)) {
-						latestIndexedRevision = updateLastRevisionIndexed(repoId);
-					}
-
-					if (log.isDebugEnabled()) {
-						log
-								.debug("Latest indexed revision for repository=" + repoId + " is : "
-										+ latestIndexedRevision);
-					}
-				
 					gitManager.fetch();
-					
+
 					final Collection<RevCommit> logEntries = gitManager.getLogEntries(latestIndexedRevision);
 
 					IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false, ANALYZER);
@@ -257,26 +254,28 @@ public class RevisionIndexer {
 					try {
 
 						final IndexReader reader = indexAccessor.getIndexReader(getIndexPath());
-
+						String thisLatestIndexedRevision = null;
 						try {
 							for (RevCommit logEntry : logEntries) {
 								if (TextUtils.stringSet(logEntry.getFullMessage()) && isKeyInString(logEntry)) {
 									if (!hasDocument(repoId, logEntry.getId(), reader)) {
+
 										Document doc = getDocument(repoId, logEntry);
 										if (log.isDebugEnabled()) {
 											log.debug("Indexing repository=" + repoId + ", revision: "
 													+ logEntry.getId());
 										}
 										writer.addDocument(doc);
-										// TODO
-										// if (logEntry.getRevision() > latestIndexedRevision) {
-										latestIndexedRevision = logEntry.getId().name();
-										// // update the in-memory cache git-71
-										log.warn("update latest as " + latestIndexedRevision + " at "
-												+ new Date(logEntry.getCommitTime() * 1000L));
-										latestIndexedRevisionTbl.put(new Long(repoId), latestIndexedRevision);
-										// }
 									}
+								}
+								// TODO
+								if (thisLatestIndexedRevision == null) {
+									// assumption first is the "most recent" TODO validate assumption
+									thisLatestIndexedRevision = logEntry.getId().name();
+									// update the in-memory cache svn-71
+									log.warn("\tupdate latest as " + thisLatestIndexedRevision + " at "
+											+ new Date(logEntry.getCommitTime() * 1000L));
+									latestIndexedRevisionTbl.put(new Long(repoId), thisLatestIndexedRevision);
 								}
 							}
 						} finally {
@@ -675,7 +674,7 @@ public class RevisionIndexer {
 			// Keep going. We may have got some issues stored.
 		}
 
-		// Construct a query with all the issue keys. Make sure to increase the  maximum number of clauses if needed.
+		// Construct a query with all the issue keys. Make sure to increase the maximum number of clauses if needed.
 		int maxClauses = BooleanQuery.getMaxClauseCount();
 		if (issues.size() > maxClauses) {
 			BooleanQuery.setMaxClauseCount(issues.size());
