@@ -43,7 +43,7 @@ public class GitActionSupport extends JiraWebActionSupport {
 		if (webLinkTypes == null) {
 			webLinkTypes = new ArrayList<WebLinkType>();
 			Properties properties = new Properties();
-			properties.load(getClass().getResourceAsStream("/weblinktypes.properties"));
+			properties.load(getClass().getResourceAsStream("/gitweblinktypes.properties"));
 
 			String[] types = properties.getProperty("types", "").split(" ");
 			for (String type : types) {
