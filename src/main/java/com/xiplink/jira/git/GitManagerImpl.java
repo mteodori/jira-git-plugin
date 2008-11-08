@@ -52,6 +52,12 @@ import com.xiplink.jira.git.linkrenderer.LinkFormatRenderer;
 import com.xiplink.jira.git.linkrenderer.NullLinkRenderer;
 
 public class GitManagerImpl implements GitManager {
+	private static final class GitDirectoryFilenameFilter implements FilenameFilter {
+		public boolean accept(File dir, String name) {
+			return "config".equals(name) || "refs".equals(name);
+		}
+	}
+
 	private static Logger log = Logger.getLogger(GitManagerImpl.class);
 
 	private GitLinkRenderer linkRenderer;
@@ -239,11 +245,10 @@ public class GitManagerImpl implements GitManager {
 				.getString(MultipleGitRepositoryManager.GIT_REPOSITORY_NAME);
 	}
 
-	public String getOrigin()
-	{
+	public String getOrigin() {
 		return properties.getString(MultipleGitRepositoryManager.GIT_ORIGIN_KEY);
 	}
-	
+
 	public String getRoot() {
 		return properties.getString(MultipleGitRepositoryManager.GIT_ROOT_KEY);
 	}
@@ -270,22 +275,30 @@ public class GitManagerImpl implements GitManager {
 			if (log.isDebugEnabled())
 				log.debug("gitdir candidate: " + current.getAbsolutePath());
 			final File gitDir = new File(current, ".git");
-			if (gitDir.isDirectory())
+			if (isGitDirectory(gitDir) != null)
 				return gitDir;
 			current = current.getParentFile();
 		}
 		// see if it is a bare repository
-		File bareDirectory = new File(root + ".git");
-		if (bareDirectory.exists()) {
-			String[] list = bareDirectory.list(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return "config".equals(name);
-				}
-			});
-
-			if (list.length > 0) {
-				return bareDirectory;
+		File testDirectory = new File(root + ".git");
+		if (testDirectory.exists()) {
+			File bareDirectory = isGitDirectory(testDirectory);
+			if (bareDirectory == null) {
+				testDirectory = new File(root);
+				if (testDirectory.exists()) {
+					bareDirectory = isGitDirectory(testDirectory);
+				}	
 			}
+			return bareDirectory;
+		}
+		return null;
+	}
+
+	// TODO funky logic - why?
+	private static File isGitDirectory(File bareDirectory) {
+		String[] list = bareDirectory.list(new GitDirectoryFilenameFilter());
+		if (list.length > 1) {
+			return bareDirectory;
 		}
 		return null;
 	}
