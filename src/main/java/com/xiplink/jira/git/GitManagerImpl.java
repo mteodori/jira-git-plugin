@@ -297,7 +297,10 @@ public class GitManagerImpl implements GitManager {
 	// TODO funky logic - why?
 	private static File isGitDirectory(File bareDirectory) {
 		String[] list = bareDirectory.list(new GitDirectoryFilenameFilter());
-		if (list.length > 1) {
+		if (list == null)
+		{
+			log.error("Invalid file or IO access problems accessing git directory candidate: " + bareDirectory);			
+		} else if (list.length > 1) {
 			return bareDirectory;
 		}
 		return null;
