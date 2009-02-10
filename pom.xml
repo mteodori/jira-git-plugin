@@ -36,19 +36,16 @@
 
 <dependencies>
     <dependency>
-      <groupId>cz.or.git</groupId>
-      <artifactId>jgit</artifactId>
-      <version>0.1-SNAPSHOT</version>
-      <!-- jgit is not in a repository (yet?) -->
+     <groupId>org.spearce</groupId>
+       <artifactId>jgit</artifactId>
+       <version>0.4-SNAPSHOT</version>
     </dependency>
-<dependency>
-<groupId>com.jcraft</groupId>
-  <artifactId>jsch</artifactId>
-  <version>0.1.37</version>
-</dependency>
+    <dependency>
+        <groupId>com.jcraft</groupId>
+        <artifactId>jsch</artifactId>
+        <version>0.1.37</version>
+    </dependency>
   </dependencies>
-
-
 
 	<developers>
 		<developer>
@@ -63,6 +60,12 @@
 		<url></url>
 	</scm>
 
+<repositories>
+<repository>
+    <id>jgit-snapshot-repository</id>
+    <url>http://egit.googlecode.com/svn/maven/snapshot-repository/</url>
+</repository>
+</repositories>
 <distributionManagement>
     <repository>
         <id>atlassian-contrib</id>
