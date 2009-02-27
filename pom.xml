@@ -55,8 +55,8 @@
 	</developers>
 
     <scm>
-		<connection>scm:svn:http://svn.atlassian.com/svn/public/contrib/jira</connection>
-		<developerConnection>scm:svn:https://svn.atlassian.com/svn/public/contrib/jira</developerConnection>
+		<connection>scm:svn:http://svn.atlassian.com/svn/public/contrib/jira/jira_git_plugin</connection>
+		<developerConnection>scm:svn:https://svn.atlassian.com/svn/public/contrib/jira/jira_git_plugin</developerConnection>
 		<url></url>
 	</scm>
 
