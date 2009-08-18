@@ -107,7 +107,7 @@
                     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.timePerformed</td>
                     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!{commit.revision.authorIdent.name} / $!{commit.revision.committerIdent.name}</td>
                     <td bgcolor="#ffffff">#makelinkedhtml($commit.revision.getFullMessage().trim())</td>
-                </tr>/$!
+                </tr>
                 <tr>
                     <td bgcolor="#f0f0f0"><b>$i18n.getText("git.project-tab.files-changed")</b></td>
                 </tr>
