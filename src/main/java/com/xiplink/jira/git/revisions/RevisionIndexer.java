@@ -557,7 +557,7 @@ public class RevisionIndexer {
 
 			// Set up and perform a search for all documents having the supplied projectKey,sorted in descending date
 			// order
-			Sort sort = new Sort(FIELD_DATE, true);
+			Sort sort = new Sort(FIELD_DATE, false);
 			Term term = new Term(FIELD_PROJECTKEY, projectKey);
 			TermQuery query = new TermQuery(term);
 
@@ -693,7 +693,7 @@ public class RevisionIndexer {
 
 		try {
 			// Run the query and sort by date in descending order
-			Sort sort = new Sort(FIELD_DATE, true);
+			Sort sort = new Sort(FIELD_DATE, false);
 			Hits hits = searcher.search(query, sort);
 
 			if (hits == null) {
