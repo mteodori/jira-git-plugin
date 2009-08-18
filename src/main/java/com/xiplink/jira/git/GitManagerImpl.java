@@ -271,25 +271,17 @@ public class GitManagerImpl implements GitManager {
 
 	private static File findGitDir(String root) {
 		File current = new File(root).getAbsoluteFile();
-		while (current != null) {
+		if (current.getName().endsWith(".git")) {
 			if (log.isDebugEnabled())
-				log.debug("gitdir candidate: " + current.getAbsolutePath());
-			final File gitDir = new File(current, ".git");
+				log.debug("checking for gitdir: " + current.getAbsolutePath());
+			if (isGitDirectory(current) != null)
+				return current;
+		} else {
+			File gitDir = new File(current, ".git");
+			if (log.isDebugEnabled())
+				log.debug("checking for gitdir: " + gitDir.getAbsolutePath());
 			if (isGitDirectory(gitDir) != null)
 				return gitDir;
-			current = current.getParentFile();
-		}
-		// see if it is a bare repository
-		File testDirectory = new File(root + ".git");
-		if (testDirectory.exists()) {
-			File bareDirectory = isGitDirectory(testDirectory);
-			if (bareDirectory == null) {
-				testDirectory = new File(root);
-				if (testDirectory.exists()) {
-					bareDirectory = isGitDirectory(testDirectory);
-				}	
-			}
-			return bareDirectory;
 		}
 		return null;
 	}
