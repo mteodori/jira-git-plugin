@@ -1,8 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>com.atlassian.jira.plugins</groupId>
@@ -13,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira_git_plugin</artifactId>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4</version>
 
     <name>Git JIRA plugin</name>
     <packaging>atlassian-plugin</packaging>
@@ -55,9 +51,9 @@
 	</developers>
 
     <scm>
-		<connection>scm:svn:http://svn.atlassian.com/svn/public/contrib/jira/jira_git_plugin</connection>
-		<developerConnection>scm:svn:https://svn.atlassian.com/svn/public/contrib/jira/jira_git_plugin</developerConnection>
-		<url></url>
+		<connection>scm:svn:http://svn.atlassian.com/svn/public/contrib/jira/jira_git_plugin/tags/jira_git_plugin-0.4</connection>
+		<developerConnection>scm:svn:https://svn.atlassian.com/svn/public/contrib/jira/jira_git_plugin/tags/jira_git_plugin-0.4</developerConnection>
+		<url>http://svn.atlassian.com/fisheye/browse/public/atlassian/jira/plugins/jira-plugin-base/tags/jira_git_plugin-0.4</url>
 	</scm>
 
 <repositories>
@@ -92,7 +88,7 @@
                         <id>pre-integration-test-user-ant-tasks</id>
                         <configuration>
                             <tasks>
-                                <echo message="Ant task before integration tests."/>
+                                <echo message="Ant task before integration tests." />
                             </tasks>
                         </configuration>
                     </execution>
@@ -101,7 +97,7 @@
                         <id>post-integration-test-user-ant-tasks</id>
                         <configuration>
                             <tasks>
-                                <echo message="Ant task _after_ integration tests."/>
+                                <echo message="Ant task _after_ integration tests." />
                             </tasks>
                         </configuration>
                     </execution>
