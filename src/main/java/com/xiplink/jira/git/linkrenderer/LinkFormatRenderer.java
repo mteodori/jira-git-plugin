@@ -100,7 +100,8 @@ public class LinkFormatRenderer implements GitLinkRenderer {
 		if (changesetFormat != null) {
 			try {
 				String href = StringUtils.replaceAll(changesetFormat, "${rev}", "" + revisionNumber);
-				return "<a href=\"" + href + "\">" + revisionNumber + "</a>";
+				String shortRevNumber = revisionNumber.substring(0,7);
+				return "<a href=\"" + href + "\">" + shortRevNumber + "...</a>";
 			} catch (Exception ex) {
 				log.error("format error: " + ex.getMessage(), ex);
 			}
