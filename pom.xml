@@ -13,7 +13,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira_git_plugin</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.4-SNAPSHOT</version>
 
     <name>Git JIRA plugin</name>
     <packaging>atlassian-plugin</packaging>
@@ -22,11 +22,11 @@
         <atlassian.plugin.key>com.xiplink.jira.git.jira_git_plugin</atlassian.plugin.key>
 
         <!-- JIRA version -->
-        <atlassian.product.version>3.12</atlassian.product.version>
+        <atlassian.product.version>3.13.2</atlassian.product.version>
         <!-- JIRA functional test library version -->
-        <atlassian.product.test-lib.version>3.12</atlassian.product.test-lib.version>
+        <atlassian.product.test-lib.version>3.13.2</atlassian.product.test-lib.version>
         <!-- JIRA data version -->
-        <atlassian.product.data.version>3.12</atlassian.product.data.version>
+        <atlassian.product.data.version>3.13.2</atlassian.product.data.version>
     </properties>
 
     <!-- TODO: Add project description -->
