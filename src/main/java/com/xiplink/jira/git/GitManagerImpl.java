@@ -495,14 +495,14 @@ public class GitManagerImpl implements GitManager {
 		}
 
 		if (r == RefUpdate.Result.FORCED) {
-			final String aOld = u.getOldObjectId().abbreviate(repository);
-			final String aNew = u.getNewObjectId().abbreviate(repository);
+			final String aOld = u.getOldObjectId().abbreviate(repository).toString();
+			final String aNew = u.getNewObjectId().abbreviate(repository).toString();
 			return aOld + "..." + aNew;
 		}
 
 		if (r == RefUpdate.Result.FAST_FORWARD) {
-			final String aOld = u.getOldObjectId().abbreviate(repository);
-			final String aNew = u.getNewObjectId().abbreviate(repository);
+			final String aOld = u.getOldObjectId().abbreviate(repository).toString();
+			final String aNew = u.getNewObjectId().abbreviate(repository).toString();
 			return aOld + ".." + aNew;
 		}
 
