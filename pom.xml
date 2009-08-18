@@ -36,9 +36,9 @@
 
 <dependencies>
     <dependency>
-     <groupId>org.spearce</groupId>
-       <artifactId>jgit</artifactId>
-       <version>0.4-SNAPSHOT</version>
+        <groupId>org.spearce</groupId>
+        <artifactId>jgit</artifactId>
+        <version>0.5.0</version>
     </dependency>
     <dependency>
         <groupId>com.jcraft</groupId>
@@ -63,7 +63,7 @@
 <repositories>
 <repository>
     <id>jgit-snapshot-repository</id>
-    <url>http://egit.googlecode.com/svn/maven/snapshot-repository/</url>
+    <url>http://egit.googlecode.com/svn/maven/</url>
 </repository>
 </repositories>
 <distributionManagement>
