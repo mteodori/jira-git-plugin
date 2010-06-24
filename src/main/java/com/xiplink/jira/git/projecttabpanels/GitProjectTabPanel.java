@@ -2,29 +2,31 @@ package com.xiplink.jira.git.projecttabpanels;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.xiplink.jira.git.revisions.RevisionInfo;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.spearce.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 import webwork.action.ActionContext;
 
-import com.atlassian.core.util.map.EasyMap;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
-import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
 import com.atlassian.jira.plugin.projectpanel.impl.GenericProjectTabPanel;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.browse.BrowseContext;
 import com.atlassian.jira.project.version.Version;
 import com.atlassian.jira.project.version.VersionManager;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.web.action.ProjectActionSupport;
-import com.atlassian.jira.web.action.browser.Browser;
+import com.atlassian.jira.web.bean.I18nBean;
 import com.opensymphony.user.User;
 import com.xiplink.jira.git.MultipleGitRepositoryManager;
 import com.xiplink.jira.git.revisions.RevisionIndexer;
@@ -39,7 +41,6 @@ public class GitProjectTabPanel extends GenericProjectTabPanel implements Projec
 
 	private static Logger log = Logger.getLogger(GitProjectTabPanel.class);
 
-	private ProjectTabPanelModuleDescriptor descriptor;
 	private MultipleGitRepositoryManager multipleGitRepositoryManager;
 	private VersionManager versionManager;
 	private PermissionManager permissionManager;
@@ -68,22 +69,13 @@ public class GitProjectTabPanel extends GenericProjectTabPanel implements Projec
 	 * @param versionManager		This manager is used to look up all the versions of the current project
 	 * @param permissionManager This manager is used to check that the user has permission to view git data.
 	 */
-	public GitProjectTabPanel(MultipleGitRepositoryManager multipleGitRepositoryManager,
-																	 VersionManager versionManager, PermissionManager permissionManager) {
+    public GitProjectTabPanel(JiraAuthenticationContext jiraAuthenticationContext,
+             MultipleGitRepositoryManager multipleGitRepositoryManager, VersionManager versionManager,
+             PermissionManager permissionManager) {
+        super(jiraAuthenticationContext);
 		this.multipleGitRepositoryManager = multipleGitRepositoryManager;
 		this.versionManager = versionManager;
 		this.permissionManager = permissionManager;
-	}
-
-	/**
-	 * Initializes the descriptor field. Must be called before <code>getHtml()</code>.
-	 * The descriptor is the JIRA class that holds a reference to a ProjectTabPanel object
-	 * and that merges a context with a Velocity template to create HTML.
-	 *
-	 * @param descriptor The descriptor that is in charge of this tab panel object.
-	 */
-	public void init(ProjectTabPanelModuleDescriptor descriptor) {
-		this.descriptor = descriptor;
 	}
 
 	/**
@@ -97,24 +89,16 @@ public class GitProjectTabPanel extends GenericProjectTabPanel implements Projec
 	 * @param browser Holds context data
 	 * @return HTML code ready for inclusion in the project tab.
 	 */
-	public String getHtml(Browser browser) {
-		if (log.isDebugEnabled()) {
-			log.debug(">getHtml(" + browser + ")");
-		}
+     @Override
+     public String getHtml(BrowseContext browser) {
+  		if (log.isDebugEnabled()) {
+  			log.debug(">getHtml(" + browser + ")");
+  		}
 
-		final Map<String, Object> startingParams = EasyMap.build("action", browser);
-
-		Project project = null;
-		String key = null;
-		User user = browser.getRemoteUser();
-		try {
-			project = browser.getProjectObject();
-			startingParams.put("project", project);
-			key = project.getKey();
-			startingParams.put("projectKey", key);
-		} catch (Exception e) {
-			log.error("!getHtml() Couldn't retrieve current project!", e);
-		}
+        Map<String, Object> startingParams = new HashMap<String, Object>();
+        Project project = browser.getProject();
+        String key = project.getKey();
+        User user = browser.getUser();
 
 		// Get selected versionNumber, if any
 		Long versionNumber = getVersionRequestParameter();
@@ -139,6 +123,10 @@ public class GitProjectTabPanel extends GenericProjectTabPanel implements Projec
 		startingParams.put("unreleasedVersions", unreleasedVersions);
 		startingParams.put("versionManager", versionManager);
 
+        startingParams.put("project", project);
+        startingParams.put("projectKey", key);
+        startingParams.put("action", new I18nBean(user));
+
 		// Merge with velocity template and return HTML.
 		return descriptor.getHtml("view", startingParams);
 	}
@@ -151,7 +139,7 @@ public class GitProjectTabPanel extends GenericProjectTabPanel implements Projec
 	 *                the latest commits for the project as a whole are returned instead.
 	 * @param user		The remote user -- we need to check that the user has "View Version Control" permission for an issue
 	 *                before we show a commit for it.
-	 * @return A List of {@link GitProjectRevisionAction} objects, each of which holds a valid {@link gitLogEntry}.
+	 * @return A List of {@link GitProjectRevisionAction} objects, each of which holds a valid {@link RevCommit}.
 	 *         The number of commits returned is decided by the constant <code>NUMBER_OF_REVISIONS</code>.
 	 */
 	private Collection<GitProjectRevisionAction> getRecentCommits(String key, Version version, User user) {
@@ -161,20 +149,20 @@ public class GitProjectTabPanel extends GenericProjectTabPanel implements Projec
 		List<GitProjectRevisionAction> actions = new ArrayList<GitProjectRevisionAction>();
 
 		try {
-			Map<Long, Collection<RevCommit>> logEntries;
+			List<RevisionInfo> logEntries;
 			RevisionIndexer indexer = multipleGitRepositoryManager.getRevisionIndexer();
+            indexer.updateIndex();
+
 			if (version == null) {
 				logEntries = indexer.getLogEntriesByProject(key, user, NUMBER_OF_REVISIONS);
 			} else {
 				logEntries = indexer.getLogEntriesByVersion(version, user, NUMBER_OF_REVISIONS);
 			}
 
-			if (logEntries != null && logEntries.size() > 0) {
-				for (Entry<Long, Collection<RevCommit>> entry : logEntries.entrySet()) {
-					long repoId = entry.getKey().longValue();
-					for (RevCommit logEntry : entry.getValue()) {
-						actions.add(new GitProjectRevisionAction(logEntry, multipleGitRepositoryManager, descriptor, repoId));
-					}
+			if (logEntries.size() > 0) {
+				for (RevisionInfo entry : logEntries) {
+                    actions.add(new GitProjectRevisionAction(entry.getCommit(), multipleGitRepositoryManager,
+                            descriptor, entry.getRepositoryId(), entry.getBranch()));
 				}
 			}
 		}

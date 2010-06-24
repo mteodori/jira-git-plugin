@@ -88,6 +88,7 @@
                     | <a href="ActivateGitRepository.jspa?repoId=$repo.getId()">$action.getText("admin.common.words.activate")</a>
                     #end
                     | <a href="DeleteGitRepository!default.jspa?repoId=$repo.getId()">$action.getText("common.words.delete")</a>
+                    | <a href="ResetLastIndexedRevisions!default.jspa?repoId=$repo.getId()">$action.getText("git.reset")</a>
                 </td>
             </tr>
             #end

@@ -96,6 +96,7 @@
 
                 <tr>
                     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.repository")</b></td>
+                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.branch")</b></td>
                     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.revision")</b></td>
                     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.date")</b></td>
                     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.user")</b></td>
@@ -103,8 +104,9 @@
                 </tr>
                 <tr>
                     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.repositoryDisplayName</td>
+                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.branch</td>
                     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.linkRenderer.getRevisionLink($commit.revision)</td>
-                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.timePerformed</td>
+                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.timePerformedFormatted</td>
                     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!{commit.revision.authorIdent.name} / $!{commit.revision.committerIdent.name}</td>
                     <td bgcolor="#ffffff">#makelinkedhtml($commit.revision.getFullMessage().trim())</td>
                 </tr>

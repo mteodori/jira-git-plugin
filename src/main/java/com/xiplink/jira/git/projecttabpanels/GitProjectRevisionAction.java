@@ -3,7 +3,7 @@ package com.xiplink.jira.git.projecttabpanels;
 import java.util.Map;
 
 import org.ofbiz.core.util.UtilMisc;
-import org.spearce.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
@@ -25,9 +25,9 @@ public class GitProjectRevisionAction extends GitRevisionAction
 
     public GitProjectRevisionAction(RevCommit logEntry,
                                            MultipleGitRepositoryManager multipleGitRepositoryManager,
-                                           ProjectTabPanelModuleDescriptor descriptor, long repoId)
+                                           ProjectTabPanelModuleDescriptor descriptor, long repoId, String branch)
     {
-        super(logEntry, multipleGitRepositoryManager, null, repoId);
+        super(logEntry, multipleGitRepositoryManager, null, repoId, branch);
         this.projectDescriptor = descriptor;
     }
 

@@ -1,117 +1,108 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <parent>
-        <groupId>com.atlassian.jira.plugins</groupId>
-        <artifactId>jira-plugin-base</artifactId>
-        <version>12</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira_git_plugin</artifactId>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.5.1-SNAPSHOT</version>
 
     <name>Git JIRA plugin</name>
     <packaging>atlassian-plugin</packaging>
 
     <properties>
-        <atlassian.plugin.key>com.xiplink.jira.git.jira_git_plugin</atlassian.plugin.key>
-
-        <!-- JIRA version -->
-        <atlassian.product.version>3.13.2</atlassian.product.version>
-        <!-- JIRA functional test library version -->
-        <atlassian.product.test-lib.version>3.13.2</atlassian.product.test-lib.version>
-        <!-- JIRA data version -->
-        <atlassian.product.data.version>3.13.2</atlassian.product.data.version>
+        <jira.version>4.1</jira.version>
+        <jira.data.version>4.0</jira.data.version>
     </properties>
 
-    <!-- TODO: Add project description -->
     <description>Git Jira plugin</description>
-	<url>http://confluence.atlassian.com/display/JIRAEXT/Jira+Git+Plugin</url>
+    <url>http://github.com/isungurov/jira4-git-plugin</url>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>atlassian-jira</artifactId>
+            <version>${jira.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-func-tests</artifactId>
+            <version>${jira.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>0.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.42</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
-<dependencies>
-    <dependency>
-        <groupId>org.spearce</groupId>
-        <artifactId>jgit</artifactId>
-        <version>0.5.0</version>
-    </dependency>
-    <dependency>
-        <groupId>com.jcraft</groupId>
-        <artifactId>jsch</artifactId>
-        <version>0.1.37</version>
-    </dependency>
-  </dependencies>
+    <developers>
+        <developer>
+            <name>J. Longman</name>
+            <organization>XipLink, Inc.</organization>
+        </developer>
+        <developer>
+            <name>Ivan Sungurov</name>
+            <organization>ISS Art, Ltd.</organization>
+        </developer>
+    </developers>
 
-	<developers>
-		<developer>
-			<name>J. Longman</name>
-			<organization>XipLink, Inc.</organization>
-		</developer>
-	</developers>
+    <repositories>
+        <repository>
+            <id>jgit-repository</id>
+            <url>http://download.eclipse.org/jgit/maven</url>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>atlassian-contrib</id>
+            <name>Atlassian Contrib Repository</name>
+            <url>dav:https://maven.atlassian.com/contrib</url>
+        </repository>
+        <snapshotRepository>
+            <id>atlassian-contrib-snapshot</id>
+            <name>Atlassian Contrib Snapshot Repository</name>
+            <url>dav:https://maven.atlassian.com/contrib-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 
-    <scm>
-		<connection>scm:svn:http://svn.atlassian.com/svn/public/contrib/jira/jira_git_plugin/tags/jira_git_plugin-0.4</connection>
-		<developerConnection>scm:svn:https://svn.atlassian.com/svn/public/contrib/jira/jira_git_plugin/tags/jira_git_plugin-0.4</developerConnection>
-		<url>http://svn.atlassian.com/fisheye/browse/public/atlassian/jira/plugins/jira-plugin-base/tags/jira_git_plugin-0.4</url>
-	</scm>
-
-<repositories>
-<repository>
-    <id>jgit-snapshot-repository</id>
-    <url>http://egit.googlecode.com/svn/maven/</url>
-</repository>
-</repositories>
-<distributionManagement>
-    <repository>
-        <id>atlassian-contrib</id>
-        <name>Atlassian Contrib Repository</name>
-        <url>dav:https://maven.atlassian.com/contrib</url>
-    </repository>
-    <snapshotRepository>
-        <id>atlassian-contrib-snapshot</id>
-        <name>Atlassian Contrib Snapshot Repository</name>
-        <url>dav:https://maven.atlassian.com/contrib-snapshot</url>
-    </snapshotRepository>
-</distributionManagement>
-
-
-
-    
     <build>
         <plugins>
-        <!--You can define Ant tasks to be executed before and/or after integration tests --><!--
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>pre-integration-test-user-ant-tasks</id>
-                        <configuration>
-                            <tasks>
-                                <echo message="Ant task before integration tests." />
-                            </tasks>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>post-integration-test-user-ant-tasks</id>
-                        <configuration>
-                            <tasks>
-                                <echo message="Ant task _after_ integration tests." />
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-jira-plugin</artifactId>
+                <version>3.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <productVersion>${jira.version}</productVersion>
+                    <productDataVersion>${jira.data.version}</productDataVersion>
+                </configuration>
             </plugin>
-            -->
-             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
                 </configuration>
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 

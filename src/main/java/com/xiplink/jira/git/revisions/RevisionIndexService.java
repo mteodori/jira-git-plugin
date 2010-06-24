@@ -15,9 +15,7 @@ import com.xiplink.jira.git.MultipleGitRepositoryManager;
 public class RevisionIndexService extends AbstractService
 {
     public static final String REVISION_INDEX_SERVICE_NAME = "Git Revision Indexing Service";
-    public static final long REVISION_INDEX_SERVICE_DELAY = 60 * 60 * 1000L;
-
-    private static ServiceManager serviceManager;
+    public static final long REVISION_INDEX_SERVICE_DELAY = 5 * 60 * 1000L;
 
     public void run()
     {
@@ -25,13 +23,16 @@ public class RevisionIndexService extends AbstractService
         {
             MultipleGitRepositoryManager multipleGitRepositoryManager = getMultipleGitRepositoryManager();
 
+            if (null == multipleGitRepositoryManager)
+                return; // Just return --- the plugin is disabled. Don't log anything.
+
             if (multipleGitRepositoryManager.getRevisionIndexer() != null)
             {
                 multipleGitRepositoryManager.getRevisionIndexer().updateIndex();
             }
             else
             {
-                log.warn("Tried to index changes but GitManager has no revision indexer?");
+                log.warn("Tried to index changes but SubversionManager has no revision indexer?");
             }
         }
         catch (Throwable t)
@@ -45,32 +46,20 @@ public class RevisionIndexService extends AbstractService
         return getObjectConfiguration("gitREVISIONSERVICE", "services/plugins/git/revisionindexservice.xml", null);
     }
 
-    public static void install() throws Exception
+    public static void install(ServiceManager serviceManager) throws Exception
     {
-        if (getServiceManager().getServiceWithName(REVISION_INDEX_SERVICE_NAME) == null)
+        if (serviceManager.getServiceWithName(REVISION_INDEX_SERVICE_NAME) == null)
         {
-            getServiceManager().addService(REVISION_INDEX_SERVICE_NAME, RevisionIndexService.class.getName(), REVISION_INDEX_SERVICE_DELAY);
+            serviceManager.addService(REVISION_INDEX_SERVICE_NAME, RevisionIndexService.class.getName(), REVISION_INDEX_SERVICE_DELAY);
         }
     }
 
-    public static void remove() throws Exception
+    public static void remove(ServiceManager serviceManager) throws Exception
     {
-        if (getServiceManager().getServiceWithName(REVISION_INDEX_SERVICE_NAME) != null)
+        if (serviceManager.getServiceWithName(REVISION_INDEX_SERVICE_NAME) != null)
         {
-            getServiceManager().removeServiceByName(REVISION_INDEX_SERVICE_NAME);
+            serviceManager.removeServiceByName(REVISION_INDEX_SERVICE_NAME);
         }
-    }
-
-    public static void setServiceManager(ServiceManager serviceManager) {
-        RevisionIndexService.serviceManager = serviceManager;
-    }
-
-    private static ServiceManager getServiceManager()
-    {
-        if (null == serviceManager)
-            serviceManager = (ServiceManager) ComponentManager.getInstance().getContainer().getComponentInstance(ServiceManager.class);
-
-        return serviceManager;
     }
 
     private MultipleGitRepositoryManager getMultipleGitRepositoryManager()

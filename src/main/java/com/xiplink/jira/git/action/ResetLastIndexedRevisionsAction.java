@@ -4,15 +4,15 @@ import com.xiplink.jira.git.GitManager;
 import com.xiplink.jira.git.MultipleGitRepositoryManager;
 
 
-public class DeleteGitRepositoryAction extends GitActionSupport {
+public class ResetLastIndexedRevisionsAction extends GitActionSupport {
 	private long repoId;
 	private GitManager gitManager;
 
-	public DeleteGitRepositoryAction(MultipleGitRepositoryManager manager) {
+	public ResetLastIndexedRevisionsAction(MultipleGitRepositoryManager manager) {
 		super(manager);
 	}
 
-	public String getRepoId() {
+    public String getRepoId() {
 		return Long.toString(repoId);
 	}
 
@@ -36,7 +36,7 @@ public class DeleteGitRepositoryAction extends GitActionSupport {
             return PERMISSION_VIOLATION_RESULT;
         }
 
-		getMultipleRepoManager().removeRepository(repoId);
+		getMultipleRepoManager().clearLastIndexedRevisions(repoId);
 		return getRedirect("ViewGitRepositories.jspa");
 	}
 

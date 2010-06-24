@@ -5,44 +5,6 @@
  */
 package com.xiplink.jira.git;
 
-import static org.spearce.jgit.lib.Constants.R_HEADS;
-import static org.spearce.jgit.lib.Constants.R_REMOTES;
-import static org.spearce.jgit.lib.Constants.R_TAGS;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.map.LRUMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.spearce.jgit.errors.CorruptObjectException;
-import org.spearce.jgit.errors.IncorrectObjectTypeException;
-import org.spearce.jgit.errors.MissingObjectException;
-import org.spearce.jgit.lib.AnyObjectId;
-import org.spearce.jgit.lib.Constants;
-import org.spearce.jgit.lib.ObjectId;
-import org.spearce.jgit.lib.RefUpdate;
-import org.spearce.jgit.lib.Repository;
-import org.spearce.jgit.lib.TextProgressMonitor;
-import org.spearce.jgit.revwalk.RevCommit;
-import org.spearce.jgit.revwalk.RevFlag;
-import org.spearce.jgit.revwalk.RevSort;
-import org.spearce.jgit.revwalk.RevWalk;
-import org.spearce.jgit.transport.FetchResult;
-import org.spearce.jgit.transport.RefSpec;
-import org.spearce.jgit.transport.TrackingRefUpdate;
-import org.spearce.jgit.transport.Transport;
-import org.spearce.jgit.treewalk.TreeWalk;
-import org.spearce.jgit.treewalk.filter.TreeFilter;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 import com.atlassian.jira.InfrastructureException;
 import com.atlassian.jira.util.JiraKeyUtils;
 import com.opensymphony.module.propertyset.PropertySet;
@@ -50,6 +12,46 @@ import com.opensymphony.util.TextUtils;
 import com.xiplink.jira.git.linkrenderer.GitLinkRenderer;
 import com.xiplink.jira.git.linkrenderer.LinkFormatRenderer;
 import com.xiplink.jira.git.linkrenderer.NullLinkRenderer;
+import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.eclipse.jgit.errors.CorruptObjectException;
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.errors.MissingObjectException;
+import org.eclipse.jgit.lib.AnyObjectId;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.RefUpdate;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.TextProgressMonitor;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevFlag;
+import org.eclipse.jgit.revwalk.RevSort;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.filter.RevFilter;
+import org.eclipse.jgit.transport.FetchResult;
+import org.eclipse.jgit.transport.RefSpec;
+import org.eclipse.jgit.transport.TrackingRefUpdate;
+import org.eclipse.jgit.transport.Transport;
+import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.TreeFilter;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.eclipse.jgit.lib.Constants.R_HEADS;
+import static org.eclipse.jgit.lib.Constants.R_REMOTES;
+import static org.eclipse.jgit.lib.Constants.R_TAGS;
 
 public class GitManagerImpl implements GitManager {
 	private static final class GitDirectoryFilenameFilter implements FilenameFilter {
@@ -89,6 +91,33 @@ public class GitManagerImpl implements GitManager {
 
 	}
 
+	public Map<String,String> getBranches(){
+        Map<String,String> branches = new HashMap<String, String>();
+		if(this.repository != null){
+				Collection<Ref> refs = this.repository.getAllRefs().values();
+				for (Ref ref : refs) {
+					if(isRealHead(ref)){
+						String branchId = ref.getObjectId().getName();
+						String branchName = ref.getName();
+                        String shortName = branchName.substring("refs/heads/".length());
+                        branches.put(shortName, branchId);
+					}
+				}
+		}
+		return branches;
+	}
+
+    private boolean isRealHead(Ref ref) {
+        if(!ref.isSymbolic()) {
+            String refName = ref.getName();
+            if(refName.length() > 10) {
+                return refName.substring(5, 10).equalsIgnoreCase("heads");
+            }
+        }
+        
+        return false;
+    }
+
 	protected void setup() {
 		// Now setup web link renderer
 		linkRenderer = null;
@@ -113,7 +142,57 @@ public class GitManagerImpl implements GitManager {
 		activate();
 	}
 
-	public synchronized Collection<RevCommit> getLogEntries(String revision) {
+    private RevCommit parseCommit(RevWalk walk, String revId) throws Exception {
+        ObjectId rev = repository.resolve(revId);
+        RevCommit commit = walk.parseCommit(rev);
+        return commit;
+    }
+
+    private void markStart(RevWalk walk, String revId) throws Exception {
+        RevCommit commit = parseCommit(walk, revId);
+        walk.markStart(commit);
+    }
+
+    private void markUninteresting(RevWalk walk, String revId) throws Exception {
+        RevCommit commit = parseCommit(walk, revId);
+        walk.markUninteresting(commit);
+    }
+
+    public synchronized RevCommit getMergeBase(String baseId, String branchId) {
+        RevCommit base = null;
+
+        // if connection isn't up, don't even try
+        if (!isActive()) {
+            return base;
+        }
+
+		try {
+			repository.scanForRepoChanges();
+
+			if (log.isDebugEnabled()) {
+				log.debug("Fetching merge base from repository=" + getRoot() + "  for " + baseId + " and " + branchId);
+			}
+
+			RevWalk walk = new RevWalk(repository);
+            walk.setRevFilter(RevFilter.MERGE_BASE);
+
+            markStart(walk, baseId);
+            markStart(walk, branchId);
+
+            Iterator<RevCommit> it = walk.iterator();
+            while (it.hasNext()) {
+                base = it.next();
+            }
+
+		} catch (Exception e) {
+			log.error("Error retrieving changes from the repository.", e);
+			deactivate(e.getMessage());
+		}
+
+		return base;
+	}
+
+	public synchronized Collection<RevCommit> getLogEntries(String fromRev, String toRev) {
 		final Collection<RevCommit> logEntries = new ArrayList<RevCommit>();
 
 		// if connection isn't up, don't even try
@@ -121,43 +200,30 @@ public class GitManagerImpl implements GitManager {
 			return logEntries;
 		}
 
+        
+        if(toRev.equals(fromRev)) {
+            return logEntries;
+        }
+
 		try {
 			repository.scanForRepoChanges();
-			final ObjectId latestRevision = repository.resolve(Constants.HEAD);
 
 			if (log.isDebugEnabled()) {
-				log.debug("Latest revision in repository=" + getRoot() + "  is : " + latestRevision);
+				log.debug("Fetching log from repository=" + getRoot() + "  for " + fromRev + ".." + toRev);
 			}
-			ObjectId retrieveStart = repository.resolve(revision);
 
 			RevWalk walk = new RevWalk(repository);
 
-			if (retrieveStart != null) {
-				try {
-					RevCommit last = walk.parseCommit(retrieveStart);
-					walk.markStart(last);
-					if (log.isDebugEnabled()) {
-						log.debug("Walking in repository=" + getRoot() + " from : " + latestRevision + " to "
-								+ retrieveStart.name());
-					}
-				} catch (Exception e) {
-					log.error("Couldn't parseCommit retrieveStart: " + retrieveStart);
-					throw e;
-				}
+			if (fromRev != null) {
+				markUninteresting(walk, fromRev);
 			}
 
-			try {
-				RevCommit head = walk.parseCommit(latestRevision);
-				walk.markStart(head);
-			} catch (Exception e) {
-				log.error("Couldn't parseCommit latestRevision: " + latestRevision);
-				throw e;
-			}
+            markStart(walk, toRev);
 
 			for (final RevCommit logEntry : walk) {
-				if (log.isDebugEnabled()) {
-					log.debug("Retrieved #" + logEntry.getId() + " : " + logEntry.getShortMessage());
-				}
+//				if (log.isDebugEnabled()) {
+//					log.debug("Retrieved #" + logEntry.getId() + " : " + logEntry.getShortMessage());
+//				}
 
 				if (TextUtils.stringSet(logEntry.getFullMessage())
 						&& JiraKeyUtils.isKeyInString(StringUtils.upperCase(logEntry.getFullMessage()))) {
@@ -165,29 +231,13 @@ public class GitManagerImpl implements GitManager {
 				}
 			}
 
-			// TODO evaluate interest in objectWalk? what does it do?
-			/*
-			 * if (walk instanceof ObjectWalk) { final ObjectWalk ow = (ObjectWalk) walk; for (;;) { final RevObject
-			 * objLogEntry = ow.nextObject(); if (objLogEntry == null) break; if (log.isDebugEnabled()) {
-			 * log.debug("Retrieved #" + objLogEntry.getId() + " : " + objLogEntry.getShortMessage()); }
-			 * 
-			 * if (TextUtils.stringSet(objLogEntry.getFullMessage()) && JiraKeyUtils
-			 * .isKeyInString(StringUtils.upperCase(objLogEntry.getFullMessage ()))) { logEntries.add(objLogEntry); } }
-			 * }
-			 */
-
-			if (log.isDebugEnabled()) {
-				log.debug("Retrieved " + logEntries.size() + " relevant revisions to index (between "
-						+ (retrieveStart == null ? "origin" : retrieveStart) + " and "
-						+ (latestRevision != null ? latestRevision : "null") + ") from repository=" + getRoot());
-			}
 		} catch (Exception e) {
 			log.error("Error retrieving changes from the repository.", e);
 			deactivate(e.getMessage());
 		}
 		// temp log comment
 		if (log.isDebugEnabled()) {
-			log.debug("log entries size = " + logEntries.size() + " for " + getRoot());
+			log.debug("Log entries size = " + logEntries.size() + " for " + getRoot());
 		}
 		return logEntries;
 	}
@@ -196,9 +246,9 @@ public class GitManagerImpl implements GitManager {
 		if (!isActive()) {
 			throw new IllegalStateException("The connection to the repository is not active");
 		}
-		final RevCommit[] logEntry = new RevCommit[] { logEntryCache.get(revision) };
+		RevCommit logEntry = logEntryCache.get(revision);
 
-		if (logEntry[0] == null) {
+		if (logEntry == null) {
 			try {
 				if (log.isDebugEnabled()) {
 					log.debug("No cache - retrieving log message for revision: " + revision);
@@ -209,7 +259,7 @@ public class GitManagerImpl implements GitManager {
 				RevWalk walk = new RevWalk(repository);
 
 				RevCommit entry = walk.parseCommit(retrieveStart);
-				logEntry[0] = entry;
+				logEntry = entry;
 				ensureCached(entry);
 
 			} catch (Exception e) {
@@ -220,7 +270,7 @@ public class GitManagerImpl implements GitManager {
 		} else if (log.isDebugEnabled()) {
 			log.debug("Found cached log message for revision: " + revision);
 		}
-		return logEntry[0];
+		return logEntry;
 	}
 
 	public long getId() {
@@ -271,17 +321,25 @@ public class GitManagerImpl implements GitManager {
 
 	private static File findGitDir(String root) {
 		File current = new File(root).getAbsoluteFile();
-		if (current.getName().endsWith(".git")) {
+		while (current != null) {
 			if (log.isDebugEnabled())
-				log.debug("checking for gitdir: " + current.getAbsolutePath());
-			if (isGitDirectory(current) != null)
-				return current;
-		} else {
-			File gitDir = new File(current, ".git");
-			if (log.isDebugEnabled())
-				log.debug("checking for gitdir: " + gitDir.getAbsolutePath());
+				log.debug("gitdir candidate: " + current.getAbsolutePath());
+			final File gitDir = new File(current, ".git");
 			if (isGitDirectory(gitDir) != null)
 				return gitDir;
+			current = current.getParentFile();
+		}
+		// see if it is a bare repository
+		File testDirectory = new File(root + ".git");
+		if (testDirectory.exists()) {
+			File bareDirectory = isGitDirectory(testDirectory);
+			if (bareDirectory == null) {
+				testDirectory = new File(root);
+				if (testDirectory.exists()) {
+					bareDirectory = isGitDirectory(testDirectory);
+				}
+			}
+			return bareDirectory;
 		}
 		return null;
 	}

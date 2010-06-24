@@ -6,15 +6,17 @@
 package com.xiplink.jira.git;
 
 import java.util.Collection;
+import java.util.Map;
 
-import org.spearce.jgit.revwalk.RevCommit;
-
+import org.eclipse.jgit.revwalk.RevCommit;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.xiplink.jira.git.linkrenderer.GitLinkRenderer;
 
 public interface GitManager {
-	Collection<RevCommit> getLogEntries(String revision);
+    Map<String,String> getBranches();
+    RevCommit getMergeBase(String baseId, String branchId);
+	Collection<RevCommit> getLogEntries(String fromRev, String toRev);
 	RevCommit getLogEntry(String revision);
 	long getId();
 	String getDisplayName();

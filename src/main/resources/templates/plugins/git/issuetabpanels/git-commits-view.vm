@@ -1,6 +1,7 @@
 <table cellpadding="2" cellspacing="0" border="0" width="100%">
 <tr>
     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.repository")</b></td>
+    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.branch")</b></td>
     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.revision")</b></td>
     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.date")</b></td>
     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.user")</b></td>
@@ -8,8 +9,9 @@
 </tr>
 <tr>
     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.repositoryDisplayName</td>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.branch</td>
     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.linkRenderer.getRevisionLink($git.revision)</td>
-    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.timePerformed</td>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.timePerformedFormatted</td>
     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!{git.revision.authorIdent.name} / $!{git.revision.committerIdent.name}</td>
     <td bgcolor="#ffffff">#makelinkedhtml($git.revision.getFullMessage().trim())</td>
 </tr>

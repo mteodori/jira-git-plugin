@@ -14,6 +14,7 @@ public interface MultipleGitRepositoryManager extends Startable {
 	String GIT_REPOSITORY_NAME = "git.display.name";
 	String GIT_REVISION_INDEXING_KEY = "revision.indexing";
 	String GIT_REVISION_CACHE_SIZE_KEY = "revision.cache.size";
+	String GIT_BRANCH_INDEXED_REVISION = "branch.";
 
 	String GIT_LINKFORMAT_TYPE = "linkformat.type";
 	String GIT_LINKFORMAT_CHANGESET = "linkformat.changeset";
@@ -45,4 +46,6 @@ public interface MultipleGitRepositoryManager extends Startable {
 	GitManager updateRepository(long repoId, GProperties props);
 
 	void removeRepository(long repoId);
+
+    void clearLastIndexedRevisions(long repoId);
 }

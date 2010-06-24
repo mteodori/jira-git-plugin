@@ -1,7 +1,7 @@
 package com.xiplink.jira.git.linkrenderer;
 
 import org.apache.log4j.Logger;
-import org.spearce.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 import com.atlassian.core.util.StringUtils;
 import com.xiplink.jira.git.FileDiff;
@@ -70,7 +70,7 @@ public class LinkFormatRenderer implements GitLinkRenderer {
 
 	public String getRevisionLink(RevCommit revision) {
 		// TODO
-		return getRevisionLink(revision.getId().name());
+		return getRevisionLink(revision.getId().getName());
 	}
 
 	public String getChangePathLink(RevCommit revision, FileDiff path) {

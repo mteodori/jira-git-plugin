@@ -1,20 +1,22 @@
 package com.xiplink.jira.git;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.opensymphony.module.propertyset.PropertyException;
 import org.apache.log4j.Logger;
 
 import com.atlassian.jira.InfrastructureException;
-import com.atlassian.jira.config.properties.ApplicationProperties;
+import com.atlassian.jira.config.util.IndexPathManager;
 import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.issue.changehistory.ChangeHistoryManager;
 import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.propertyset.JiraPropertySetFactory;
 import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.service.ServiceManager;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.xiplink.jira.git.revisions.RevisionIndexService;
 import com.xiplink.jira.git.revisions.RevisionIndexer;
@@ -43,11 +45,15 @@ public class MultipleGitRepositoryManagerImpl implements MultipleGitRepositoryMa
 
 	private long lastRepoId;
 
-	public MultipleGitRepositoryManagerImpl(ApplicationProperties applicationProperties, VersionManager versionManager,
-			IssueManager issueManager, PermissionManager permissionManager,
-			JiraPropertySetFactory jiraPropertySetFactory)
-
-	{
+    public MultipleGitRepositoryManagerImpl(
+            VersionManager versionManager,
+            IssueManager issueManager,
+            PermissionManager permissionManager,
+            ChangeHistoryManager changeHistoryManager,
+            JiraPropertySetFactory jiraPropertySetFactory,
+            ServiceManager serviceManager,
+            IndexPathManager indexPathManager)
+    {
 		this.jiraPropertySetFactory = jiraPropertySetFactory;
 
 		managerMap = loadGitManagers();
@@ -63,14 +69,13 @@ public class MultipleGitRepositoryManagerImpl implements MultipleGitRepositoryMa
 		if (!revisionIndexing) // they might have removed the property - let's check there is no service anyway
 		{
 			try {
-				RevisionIndexService.remove();
+				RevisionIndexService.remove(serviceManager);
 			} catch (Exception e) {
 				throw new InfrastructureException("Failure removing revision indexing service", e);
 			}
 		} else {
 			// create revision indexer once we know we have succeed initializing our repositories
-			revisionIndexer = new RevisionIndexer(this, applicationProperties, versionManager, issueManager,
-					permissionManager);
+			revisionIndexer = new RevisionIndexer(this, versionManager, issueManager, permissionManager, serviceManager, indexPathManager);
 		}
 	}
 
@@ -188,21 +193,39 @@ public class MultipleGitRepositoryManagerImpl implements MultipleGitRepositoryMa
 		if (original == null) {
 			return;
 		}
+
 		try {
 			managerMap.remove(new Long(repoId));
 
 			// would like to just call remove() but this version doesn't appear to have that, remove all of it's
 			// properties instead
-			Collection<String> keys = new ArrayList<String>(original.getProperties().getKeys());
-			for (String string : keys) {
-				String key = string;
+			Collection<String> keys = original.getProperties().getKeys();
+			for (String key : keys) {
 				original.getProperties().remove(key);
 			}
 
-			if (revisionIndexer != null)
+			if (revisionIndexer != null) {
 				revisionIndexer.removeEntries(original);
+            }
 		} catch (Exception e) {
 			throw new InfrastructureException("Could not remove repository index", e);
+		}
+	}
+
+
+	public void clearLastIndexedRevisions(long repoId) {
+		GitManager original = managerMap.get(new Long(repoId));
+		if (original == null) {
+			return;
+		}
+
+		try {
+			Collection<String> keys = original.getProperties().getKeys(MultipleGitRepositoryManager.GIT_BRANCH_INDEXED_REVISION);
+			for (String key : keys) {
+				original.getProperties().remove(key);
+			}
+		} catch (PropertyException e) {
+			throw new InfrastructureException("Could not remove last indexed revisions", e);
 		}
 	}
 

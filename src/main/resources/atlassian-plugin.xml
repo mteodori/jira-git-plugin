@@ -1,19 +1,17 @@
-<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}">
-
-
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.artifactId}">
 
     <plugin-info>
         <description>JIRA git Plugin</description>
-        <version>For JIRA 3.12</version>
-        <application-version min="3.12" max="3.12"/>
+        <version>${project.version}</version>
+        <application-version min="4.0"/>
         <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
 	    <param name="configure.url">/secure/ViewGitRepositories.jspa</param>
     </plugin-info>
 
-    <issue-tabpanel key="git-commits-tabpanel" name="git Changes Tab Panel" class="com.xiplink.jira.git.issuetabpanels.changes.GitRevisionsTabPanel">
+    <issue-tabpanel key="git-commits-tabpanel" name="GIT Changes Tab Panel" class="com.xiplink.jira.git.issuetabpanels.changes.GitRevisionsTabPanel">
         <resource type="i18n" name="i18n" location="templates.plugins.git.issuetabpanels.git_jira_plugin"/>
         <description>Show git commits related to an issue in an issue tab panel.</description>
-        <label>git Commits</label>
+        <label>Git commits</label>
         <resource type="velocity" name="view" location="templates/plugins/git/issuetabpanels/git-commits-view.vm"/>
     </issue-tabpanel>
 
@@ -50,7 +48,7 @@
             <action name="com.xiplink.jira.git.action.AddGitRepositoryAction" alias="AddGitRepository">
                 <view name="input">/templates/plugins/git/configuration/add.vm</view>
                 <view name="error">/templates/plugins/git/configuration/add.vm</view>
-                <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
+                <view name="permissionviolation">/templates/pluins/git/configuration/no-privilege.vm</view>
             </action>
             <action name="com.xiplink.jira.git.action.UpdateGitRepositoryAction" alias="UpdateGitRepository">
                 <view name="input">/templates/plugins/git/configuration/edit.vm</view>
@@ -61,6 +59,11 @@
 							<view name="input">/templates/plugins/git/configuration/delete.vm</view>
                             <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
 							<view name="error">/templates/plugins/git/configuration/delete.vm</view>
+            </action>
+            <action name="com.xiplink.jira.git.action.ResetLastIndexedRevisionsAction" alias="ResetLastIndexedRevisions">
+							<view name="input">/templates/plugins/git/configuration/reset.vm</view>
+                            <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
+							<view name="error">/templates/plugins/git/configuration/reset.vm</view>
             </action>
             <action name="com.xiplink.jira.git.action.ActivateGitRepositoryAction" alias="ActivateGitRepository">
                 <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>

@@ -8,11 +8,10 @@ package com.xiplink.jira.git.issuetabpanels.changes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
+import com.xiplink.jira.git.revisions.RevisionIndexer;
+import com.xiplink.jira.git.revisions.RevisionInfo;
 import org.apache.log4j.Logger;
-import org.spearce.jgit.revwalk.RevCommit;
 
 import com.atlassian.core.util.collection.EasyList;
 import com.atlassian.jira.issue.Issue;
@@ -36,25 +35,22 @@ public class GitRevisionsTabPanel extends AbstractIssueTabPanel {
 		this.permissionManager = permissionManager;
 	}
 
-	public List<GitRevisionAction> getActions(Issue issue, User remoteUser) {
-		try {
-			Map<Long, List<RevCommit>> logEntries = multipleGitRepositoryManager.getRevisionIndexer().getLogEntriesByRepository(issue);
+    public List<GitRevisionAction> getActions(Issue issue, User remoteUser) {
+        try {
+            RevisionIndexer revisionIndexer = multipleGitRepositoryManager.getRevisionIndexer();
+
+            revisionIndexer.updateIndex();
+			List<RevisionInfo> logEntries = revisionIndexer.getLogEntriesByRepository(issue);
 
 			// This is a bit of a hack to get the error message across
-			if (logEntries == null) {
-				GenericMessageAction action = new GenericMessageAction(getText("no.index.error.message"));
-				return EasyList.build(action);
-			} else if (logEntries.size() == 0) {
+			if (logEntries.size() == 0) {
 				GenericMessageAction action = new GenericMessageAction(getText("no.log.entries.message"));
 				return EasyList.build(action);
 			} else {
 				List<GitRevisionAction> actions = new ArrayList<GitRevisionAction>(logEntries.size());
-				for (Entry<Long, List<RevCommit>> entry : logEntries.entrySet()) {
-					long repoId = entry.getKey().longValue();
-
-					for (RevCommit logEntry : entry.getValue()) {
-						actions.add(new GitRevisionAction(logEntry, multipleGitRepositoryManager, descriptor, repoId));
-					}
+				for (RevisionInfo entry : logEntries) {
+                    actions.add(new GitRevisionAction(entry.getCommit(), multipleGitRepositoryManager,
+                            descriptor, entry.getRepositoryId(), entry.getBranch()));
 				}
 				Collections.sort(actions, IssueActionComparator.COMPARATOR);
 				return actions;

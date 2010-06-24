@@ -6,13 +6,14 @@
 package com.xiplink.jira.git.issuetabpanels.changes;
 
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.spearce.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 
 import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueAction;
@@ -33,23 +34,18 @@ public class GitRevisionAction extends AbstractIssueAction {
 	protected final IssueTabPanelModuleDescriptor descriptor;
 	protected MultipleGitRepositoryManager multipleGitRepositoryManager;
 	protected Date timePerformed;
+    protected String branch;
 
 	public GitRevisionAction(RevCommit logEntry, MultipleGitRepositoryManager multipleGitRepositoryManager,
-			IssueTabPanelModuleDescriptor descriptor, long repoId) {
+			IssueTabPanelModuleDescriptor descriptor, long repoId, String branch) {
 		super(descriptor);
 		this.multipleGitRepositoryManager = multipleGitRepositoryManager;
 		this.descriptor = descriptor;
 		/* git-93 */
-		this.revision = logEntry;// .copy();
-		// new RevCommit(
-		// logEntry.getChangedPaths(),
-		// logEntry.getRevision(),
-		// logEntry.getAuthor(),
-		// logEntry.getDate(),
-		// rewriteLogMessage(logEntry.getMessage())
-		// );
+		this.revision = logEntry;
 		this.timePerformed = new Date(revision.getCommitTime() * 1000L);
 		this.repoId = repoId;
+        this.branch = branch;
 	}
 
 	protected void populateVelocityParams(Map params) {
@@ -68,11 +64,20 @@ public class GitRevisionAction extends AbstractIssueAction {
 		return timePerformed;
 	}
 
+    public String getTimePerformedFormatted() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ZZZ");
+        return sdf.format(timePerformed);
+    }
+
 	public long getRepoId() {
 		return repoId;
 	}
 
-	public String getUsername() {
+    public String getBranch() {
+        return branch;
+    }
+
+    public String getUsername() {
 		return revision.getAuthorIdent().getName();
 	}
 

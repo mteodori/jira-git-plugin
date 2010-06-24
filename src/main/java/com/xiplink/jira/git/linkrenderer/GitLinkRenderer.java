@@ -6,7 +6,7 @@
  */
 package com.xiplink.jira.git.linkrenderer;
 
-import org.spearce.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 import com.xiplink.jira.git.FileDiff;
 
