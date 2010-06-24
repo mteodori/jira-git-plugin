@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira_git_plugin</artifactId>
-    <version>0.5.1-SNAPSHOT</version>
+    <version>0.5.1</version>
 
     <name>Git JIRA plugin</name>
     <packaging>atlassian-plugin</packaging>
@@ -15,7 +15,7 @@
     </properties>
 
     <description>Git Jira plugin</description>
-    <url>http://github.com/isungurov/jira4-git-plugin</url>
+    <url>https://studio.plugins.atlassian.com/wiki/display/JGIT/JIRA+Git+Plugin</url>
 
     <dependencies>
         <dependency>
@@ -61,9 +61,15 @@
         </developer>
         <developer>
             <name>Ivan Sungurov</name>
-            <organization>ISS Art, Ltd.</organization>
+            <organization>Reliadev</organization>
         </developer>
     </developers>
+
+    <scm>
+        <connection>scm:svn:http://svn.atlassian.com/svn/public/contrib/jira/jira_git_plugin/tags/jira_git_plugin-0.4</connection>
+        <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.1</developerConnection>
+        <url>https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.1</url>
+    </scm>
 
     <repositories>
         <repository>
