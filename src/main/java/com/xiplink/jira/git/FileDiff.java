@@ -27,6 +27,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 
 public class FileDiff {
 
+    private final int number;
     private final RevCommit commit;
     private DiffEntry diffEntry;
 
@@ -54,9 +55,11 @@ public class FileDiff {
 
         if (walk.getTreeCount() <= 2) {
             List<DiffEntry> entries = DiffEntry.scan(walk);
+            int number = 0;
             for (DiffEntry entry : entries) {
-                final FileDiff d = new FileDiff(commit, entry);
+                final FileDiff d = new FileDiff(commit, entry, number);
                 r.add(d);
+                number++;
             }
         } else { // DiffEntry does not support walks with more than two trees
             final int nTree = walk.getTreeCount();
@@ -144,9 +147,14 @@ public class FileDiff {
         return modes.toArray(new FileMode[]{});
     }
 
-    FileDiff(final RevCommit c, final DiffEntry entry) {
+    public int getNumber() {
+        return number;
+    }
+
+    FileDiff(final RevCommit c, final DiffEntry entry, final int num) {
         diffEntry = entry;
         commit = c;
+        number = num;
     }
 
     private static class FileDiffForMerges extends FileDiff {
@@ -157,7 +165,7 @@ public class FileDiff {
         private FileMode[] modes;
 
         private FileDiffForMerges(final RevCommit c) {
-            super(c, null);
+            super(c, null, 0);
         }
 
         @Override
