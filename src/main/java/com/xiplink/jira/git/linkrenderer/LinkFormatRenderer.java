@@ -78,14 +78,19 @@ public class LinkFormatRenderer implements GitLinkRenderer {
                 "${parent}", revision.getParent(0).getId().name()
         );
 
+        if (path.blobs.length == 1) {
+            subst.put("${blob}", path.blobs[0].name());
+        } else if (path.blobs.length != 0) {
+            subst.put("${blob}", path.blobs[1].name());
+            subst.put("${parent_blob}", path.blobs[0].name());
+        }
+
         String format;
         if (GitConstants.MODIFICATION.equals(changeType)) {
             format = fileModifiedFormat;
         } else if (GitConstants.ADDED.equals(changeType)) {
-            subst.put("${blob}", path.blobs[1].name());
             format = fileAddedFormat;
         } else if (GitConstants.DELETED.equals(changeType)) {
-            subst.put("${blob}", path.blobs[0].name());
             format = fileDeletedFormat;
         } else {
             format = fileModifiedFormat;
