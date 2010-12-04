@@ -4,13 +4,13 @@ import com.atlassian.core.util.map.EasyMap;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.revwalk.RevCommit;
 
-import com.atlassian.core.util.StringUtils;
 import com.xiplink.jira.git.FileDiff;
 import com.xiplink.jira.git.GitConstants;
 import com.xiplink.jira.git.GitManager;
 import com.xiplink.jira.git.ViewLinkFormat;
 
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A link renderer implementation which lets the user specify the format in the properties file, to accommodate various
@@ -31,29 +31,27 @@ public class LinkFormatRenderer implements GitLinkRenderer {
     public LinkFormatRenderer(GitManager gitManager) {
 
         ViewLinkFormat linkFormat = gitManager.getViewLinkFormat();
+
         if (linkFormat != null) {
-            if (linkFormat.getChangesetFormat() != null && linkFormat.getChangesetFormat().trim().length() != 0) {
+            if (StringUtils.isNotBlank(linkFormat.getChangesetFormat())) {
                 changesetFormat = linkFormat.getChangesetFormat();
             }
 
-            if (linkFormat.getFileAddedFormat() != null && linkFormat.getFileAddedFormat().trim().length() != 0) {
+            if (StringUtils.isNotBlank(linkFormat.getFileAddedFormat())) {
                 fileAddedFormat = linkFormat.getFileAddedFormat();
             }
 
-            if (linkFormat.getFileModifiedFormat() != null && linkFormat.getFileModifiedFormat().trim().length() != 0) {
+            if (StringUtils.isNotBlank(linkFormat.getFileModifiedFormat())) {
                 fileModifiedFormat = linkFormat.getFileModifiedFormat();
             }
 
-            if (linkFormat.getFileDeletedFormat() != null && linkFormat.getFileDeletedFormat().trim().length() != 0) {
+            if (StringUtils.isNotBlank(linkFormat.getFileDeletedFormat())) {
                 fileDeletedFormat = linkFormat.getFileDeletedFormat();
             }
 
-            if (linkFormat.getViewFormat() != null && linkFormat.getViewFormat().trim().length() != 0) {
+            if (StringUtils.isNotBlank(linkFormat.getViewFormat())) {
                 pathLinkFormat = linkFormat.getViewFormat();
             }
-
-        } else {
-            log.warn("viewLinkFormat is null");
         }
     }
 
@@ -65,7 +63,6 @@ public class LinkFormatRenderer implements GitLinkRenderer {
     }
 
     public String getRevisionLink(RevCommit revision) {
-        // TODO
         return getRevisionLink(revision.getId().getName());
     }
 
@@ -100,31 +97,26 @@ public class LinkFormatRenderer implements GitLinkRenderer {
     }
 
     protected String getRevisionLink(String revisionNumber) {
-        if (changesetFormat != null) {
-            try {
-                String href = StringUtils.replaceAll(changesetFormat, "${rev}", "" + revisionNumber);
-                String shortRevNumber = revisionNumber.substring(0, 7);
-                return "<a href=\"" + href + "\">" + shortRevNumber + "...</a>";
-            } catch (Exception ex) {
-                log.error("format error: " + ex.getMessage(), ex);
-            }
+        if (changesetFormat == null) {
+            return revisionNumber;
         }
-        return "" + revisionNumber;
 
+        String href = StringUtils.replace(changesetFormat, "${rev}", revisionNumber);
+        String shortRevNumber = revisionNumber.substring(0, 7);
+        return "<a href=\"" + href + "\">" + shortRevNumber + "...</a>";
     }
 
     private String formatLink(String format, String path, Map<String, String> substitutions) {
-
-        if (format != null) {
-            String href = format;
-
-            for (Map.Entry<String, String> subst : substitutions.entrySet()) {
-                href = StringUtils.replaceAll(href, subst.getKey(), subst.getValue());
-            }
-
-            return String.format("<a href=\"%s\">%s</a>", href, path);
+        if (format == null) {
+            return path;
         }
 
-        return path;
+        String href = format;
+
+        for (Map.Entry<String, String> subst : substitutions.entrySet()) {
+            href = StringUtils.replace(href, subst.getKey(), subst.getValue());
+        }
+
+        return String.format("<a href=\"%s\">%s</a>", href, path);
     }
 }
