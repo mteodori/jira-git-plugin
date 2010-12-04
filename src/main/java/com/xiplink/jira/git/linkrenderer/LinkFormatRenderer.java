@@ -23,7 +23,6 @@ public class LinkFormatRenderer implements GitLinkRenderer {
 
     private static Logger log = Logger.getLogger(LinkFormatRenderer.class);
     private String pathLinkFormat;
-    private String fileReplacedFormat;
     private String fileAddedFormat;
     private String fileModifiedFormat;
     private String fileDeletedFormat;
@@ -43,10 +42,6 @@ public class LinkFormatRenderer implements GitLinkRenderer {
 
             if (linkFormat.getFileModifiedFormat() != null && linkFormat.getFileModifiedFormat().trim().length() != 0) {
                 fileModifiedFormat = linkFormat.getFileModifiedFormat();
-            }
-
-            if (linkFormat.getFileReplacedFormat() != null && linkFormat.getFileReplacedFormat().trim().length() != 0) {
-                fileReplacedFormat = linkFormat.getFileReplacedFormat();
             }
 
             if (linkFormat.getFileDeletedFormat() != null && linkFormat.getFileDeletedFormat().trim().length() != 0) {
@@ -89,8 +84,6 @@ public class LinkFormatRenderer implements GitLinkRenderer {
         } else if (GitConstants.ADDED.equals(changeType)) {
             subst.put("${blob}", path.blobs[1].name());
             format = fileAddedFormat;
-        } else if (GitConstants.REPLACED.equals(changeType)) {
-            format = fileReplacedFormat;
         } else if (GitConstants.DELETED.equals(changeType)) {
             subst.put("${blob}", path.blobs[0].name());
             format = fileDeletedFormat;

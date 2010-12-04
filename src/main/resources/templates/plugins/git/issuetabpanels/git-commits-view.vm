@@ -27,8 +27,6 @@
                     <font color="#009900" size="-2"><b title="Add">$i18n.getText("git.issue-tab.added")</b></font>
                 #elseif ($git.isModified($changePath) == true)
                     <font color="#999933" size="-2"><b title="Modify">$i18n.getText("git.issue-tab.modified")</b></font>
-                #elseif ($git.isReplaced($changePath) == true)
-                    <font color="#999933" size="-2"><b title="Replace">$i18n.getText("git.issue-tab.replaced")</b></font>
                 #else
                     $changePath.change
                 #end

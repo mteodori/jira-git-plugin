@@ -93,10 +93,6 @@ public class GitRevisionAction extends AbstractIssueAction {
 		return GitConstants.MODIFICATION.equals(logEntryPath.change);
 	}
 
-	public boolean isReplaced(FileDiff logEntryPath) {
-		return GitConstants.REPLACED.equals(logEntryPath.change);
-	}
-
 	public boolean isDeleted(FileDiff logEntryPath) {
 		return GitConstants.DELETED.equals(logEntryPath.change);
 	}

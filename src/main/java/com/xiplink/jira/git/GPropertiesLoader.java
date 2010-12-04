@@ -72,8 +72,6 @@ public class GPropertiesLoader {
 					+ indexStr);
 			final String fileModifiedFormat = props
 					.getProperty(MultipleGitRepositoryManager.GIT_LINKFORMAT_FILE_MODIFIED + indexStr);
-			final String fileReplacedFormat = props
-					.getProperty(MultipleGitRepositoryManager.GIT_LINKFORMAT_FILE_REPLACED + indexStr);
 			final String fileDeletedFormat = props.getProperty(MultipleGitRepositoryManager.GIT_LINKFORMAT_FILE_DELETED
 					+ indexStr);
 
@@ -90,7 +88,7 @@ public class GPropertiesLoader {
 
 			return new GitProperties().setRoot(gitRootStr).setOrigin(gitOriginStr).setDisplayName(displayName).setChangeSetFormat(
 					changesetFormat).setFileAddedFormat(fileAddedFormat).setFileModifiedFormat(fileModifiedFormat)
-					.setFileReplacedFormat(fileReplacedFormat).setFileDeletedFormat(fileDeletedFormat).setRevisionIndexing(
+					.setFileDeletedFormat(fileDeletedFormat).setRevisionIndexing(
 							revisionIndexing).setRevisioningCacheSize(revisionCacheSize);
 
 		} else {

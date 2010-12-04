@@ -36,7 +36,6 @@
         webLinkTypes["$webLinkType.key"]["changesetFormat"] = "$webLinkType.changesetFormat";
         webLinkTypes["$webLinkType.key"]["fileAddedFormat"] = "$webLinkType.fileAddedFormat";
         webLinkTypes["$webLinkType.key"]["fileModifiedFormat"] = "$webLinkType.fileModifiedFormat";
-        webLinkTypes["$webLinkType.key"]["fileReplacedFormat"] = "$webLinkType.fileReplacedFormat";
         webLinkTypes["$webLinkType.key"]["fileDeletedFormat"] = "$webLinkType.fileDeletedFormat";
     #end
 
@@ -69,7 +68,6 @@
         setWebLinkFormat("changesetFormat", selectedType),
         setWebLinkFormat("fileAddedFormat", selectedType),
         setWebLinkFormat("fileModifiedFormat", selectedType),
-        setWebLinkFormat("fileReplacedFormat", selectedType),
         setWebLinkFormat("fileDeletedFormat", selectedType);
     }
 </script>
@@ -97,10 +95,6 @@
 
 #controlHeader($action 'fileModifiedFormat' $action.getText("git.repository.file.modified.format") false $displayParameters.noHeader)
 <input type="text" id="fileModifiedFormat" name="fileModifiedFormat" #if ($fileModifiedFormat) value="$fileModifiedFormat" #end  size="60"/>
-#controlFooter($action '' $displayParameters.noHeader)
-
-#controlHeader($action 'fileReplacedFormat' $action.getText("git.repository.file.replaced.format") false $displayParameters.noHeader)
-<input type="text" id="fileReplacedFormat" name="fileReplacedFormat" #if ($fileReplacedFormat) value="$fileReplacedFormat" #end  size="60"/>
 #controlFooter($action '' $displayParameters.noHeader)
 
 #controlHeader($action 'fileDeletedFormat' $action.getText("git.repository.file.deleted.format") false $displayParameters.noHeader)

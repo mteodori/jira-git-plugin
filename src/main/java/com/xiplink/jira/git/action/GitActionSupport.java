@@ -15,45 +15,47 @@ import com.xiplink.jira.git.WebLinkType;
  */
 public class GitActionSupport extends JiraWebActionSupport {
 
-	private MultipleGitRepositoryManager multipleRepoManager;
-	private List<WebLinkType> webLinkTypes;
+    private MultipleGitRepositoryManager multipleRepoManager;
+    private List<WebLinkType> webLinkTypes;
 
-	public GitActionSupport(MultipleGitRepositoryManager manager) {
-		this.multipleRepoManager = manager;
-	}
+    public GitActionSupport(MultipleGitRepositoryManager manager) {
+        this.multipleRepoManager = manager;
+    }
 
-	protected MultipleGitRepositoryManager getMultipleRepoManager() {
-		return multipleRepoManager;
-	}
+    protected MultipleGitRepositoryManager getMultipleRepoManager() {
+        return multipleRepoManager;
+    }
 
-	public boolean hasPermissions() {
-		return isHasPermission(Permissions.ADMINISTER);
-	}
+    public boolean hasPermissions() {
+        return isHasPermission(Permissions.ADMINISTER);
+    }
 
-	public String doDefault() {
-		if (!hasPermissions()) {
-			addErrorMessage(getText("git.admin.privilege.required"));
-			return PERMISSION_VIOLATION_RESULT;
-		}
+    public String doDefault() {
+        if (!hasPermissions()) {
+            addErrorMessage(getText("git.admin.privilege.required"));
+            return PERMISSION_VIOLATION_RESULT;
+        }
 
-		return INPUT;
-	}
+        return INPUT;
+    }
 
-	public List<WebLinkType> getWebLinkTypes() throws IOException {
-		if (webLinkTypes == null) {
-			webLinkTypes = new ArrayList<WebLinkType>();
-			Properties properties = new Properties();
-			properties.load(getClass().getResourceAsStream("/gitweblinktypes.properties"));
+    public List<WebLinkType> getWebLinkTypes() throws IOException {
+        if (webLinkTypes == null) {
+            webLinkTypes = new ArrayList<WebLinkType>();
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/gitweblinktypes.properties"));
 
-			String[] types = properties.getProperty("types", "").split(" ");
-			for (String type : types) {
-				webLinkTypes.add(new WebLinkType(type, properties.getProperty(type + ".name", type),
-						properties.getProperty(type + ".view"), properties.getProperty(type + ".changeset"),
-						properties.getProperty(type + ".file.added"), properties.getProperty(type
-								+ ".file.modified"), properties.getProperty(type + ".file.replaced"), properties
-								.getProperty(type + ".file.deleted")));
-			}
-		}
-		return webLinkTypes;
-	}
+            String[] types = properties.getProperty("types", "").split(" ");
+            for (String type : types) {
+                webLinkTypes.add(new WebLinkType(type,
+                        properties.getProperty(type + ".name", type),
+                        properties.getProperty(type + ".view"),
+                        properties.getProperty(type + ".changeset"),
+                        properties.getProperty(type + ".file.added"),
+                        properties.getProperty(type + ".file.modified"),
+                        properties.getProperty(type + ".file.deleted")));
+            }
+        }
+        return webLinkTypes;
+    }
 }

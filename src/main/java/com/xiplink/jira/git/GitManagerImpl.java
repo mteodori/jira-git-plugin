@@ -404,15 +404,13 @@ public class GitManagerImpl implements GitManager {
 			final String fileAddedFormat = properties.getString(MultipleGitRepositoryManager.GIT_LINKFORMAT_FILE_ADDED);
 			final String fileModifiedFormat = properties
 					.getString(MultipleGitRepositoryManager.GIT_LINKFORMAT_FILE_MODIFIED);
-			final String fileReplacedFormat = properties
-					.getString(MultipleGitRepositoryManager.GIT_LINKFORMAT_FILE_REPLACED);
 			final String fileDeletedFormat = properties
 					.getString(MultipleGitRepositoryManager.GIT_LINKFORMAT_FILE_DELETED);
 
 			if (linkPathFormat != null || changesetFormat != null || fileAddedFormat != null
-					|| fileModifiedFormat != null || fileReplacedFormat != null || fileDeletedFormat != null)
+					|| fileModifiedFormat != null || fileDeletedFormat != null)
 				viewLinkFormat = new ViewLinkFormat(type, changesetFormat, fileAddedFormat, fileModifiedFormat,
-						fileReplacedFormat, fileDeletedFormat, linkPathFormat);
+						fileDeletedFormat, linkPathFormat);
 			else
 				viewLinkFormat = null; /*
 										 * [git-190] This could happen if the user clears all the fields in the Git

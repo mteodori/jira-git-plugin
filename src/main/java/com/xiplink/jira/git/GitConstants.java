@@ -9,5 +9,4 @@ public interface GitConstants
 	static final String MODIFICATION = "M";
 	static final String ADDED = "A";
 	static final String DELETED = "D";
-	static final String REPLACED = "R";
 }
