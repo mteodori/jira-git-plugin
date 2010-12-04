@@ -5,12 +5,12 @@ import org.apache.log4j.Logger;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import com.xiplink.jira.git.FileDiff;
-import com.xiplink.jira.git.GitConstants;
 import com.xiplink.jira.git.GitManager;
 import com.xiplink.jira.git.ViewLinkFormat;
 
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jgit.lib.ObjectId;
 
 /**
  * A link renderer implementation which lets the user specify the format in the properties file, to accommodate various
@@ -57,9 +57,9 @@ public class LinkFormatRenderer implements GitLinkRenderer {
 
     // TODO
     public String getCopySrcLink(RevCommit revision, FileDiff path) {
-        return formatLink(pathLinkFormat, path.path, EasyMap.build(
+        return formatLink(pathLinkFormat, path.getPath(), EasyMap.build(
                 "${rev}", revision.getId().name(),
-                "${path}", path.path));
+                "${path}", path.getPath()));
     }
 
     public String getRevisionLink(RevCommit revision) {
@@ -67,33 +67,36 @@ public class LinkFormatRenderer implements GitLinkRenderer {
     }
 
     public String getChangePathLink(RevCommit revision, FileDiff path) {
-        String changeType = path.change;
-
         Map<String, String> subst = EasyMap.build(
                 "${rev}", revision.getId().name(),
-                "${path}", path.path,
+                "${path}", path.getPath(),
                 "${parent}", revision.getParent(0).getId().name()
         );
 
-        if (path.blobs.length == 1) {
-            subst.put("${blob}", path.blobs[0].name());
-        } else if (path.blobs.length != 0) {
-            subst.put("${blob}", path.blobs[1].name());
-            subst.put("${parent_blob}", path.blobs[0].name());
+        ObjectId[] blobs = path.getBlobs();
+        if (blobs.length == 1) {
+            subst.put("${blob}", blobs[0].name());
+        } else if (blobs.length != 0) {
+            subst.put("${blob}", blobs[1].name());
+            subst.put("${parent_blob}", blobs[0].name());
         }
 
         String format;
-        if (GitConstants.MODIFICATION.equals(changeType)) {
-            format = fileModifiedFormat;
-        } else if (GitConstants.ADDED.equals(changeType)) {
-            format = fileAddedFormat;
-        } else if (GitConstants.DELETED.equals(changeType)) {
-            format = fileDeletedFormat;
-        } else {
-            format = fileModifiedFormat;
+        switch (path.getChange()) {
+            case MODIFY:
+                format = fileModifiedFormat;
+                break;
+            case ADD:
+                format = fileAddedFormat;
+                break;
+            case DELETE:
+                format = fileDeletedFormat;
+                break;
+            default:
+                format = fileModifiedFormat;
         }
 
-        return formatLink(format, path.path, subst);
+        return formatLink(format, path.getPath(), subst);
     }
 
     protected String getRevisionLink(String revisionNumber) {

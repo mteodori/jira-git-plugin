@@ -24,7 +24,7 @@ public class NullLinkRenderer implements GitLinkRenderer
 
     public String getChangePathLink(RevCommit revision, FileDiff logEntryPath)
     {
-        return logEntryPath.path;
+        return logEntryPath.getPath();
     }
 
     public String getCopySrcLink(RevCommit revision, FileDiff logEntryPath)

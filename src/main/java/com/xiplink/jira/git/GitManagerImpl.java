@@ -24,6 +24,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.RepositoryBuilder;
 import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevFlag;
@@ -372,7 +373,7 @@ public class GitManagerImpl implements GitManager {
 			return;
 		}
 		try {
-			repository = new Repository(gitdir);
+                        repository = new RepositoryBuilder().setGitDir(gitdir).build();
 		} catch (IOException e) {
 			log.error("Connection to git repository " + getRoot() + " failed: " + e.getMessage(), e);
 			// We don't want to throw an exception here because then the system
@@ -551,14 +552,14 @@ public class GitManagerImpl implements GitManager {
 		}
 
 		if (r == RefUpdate.Result.FORCED) {
-			final String aOld = u.getOldObjectId().abbreviate(repository).toString();
-			final String aNew = u.getNewObjectId().abbreviate(repository).toString();
+			final String aOld = u.getOldObjectId().abbreviate(6).toString();
+			final String aNew = u.getNewObjectId().abbreviate(6).toString();
 			return aOld + "..." + aNew;
 		}
 
 		if (r == RefUpdate.Result.FAST_FORWARD) {
-			final String aOld = u.getOldObjectId().abbreviate(repository).toString();
-			final String aNew = u.getNewObjectId().abbreviate(repository).toString();
+			final String aOld = u.getOldObjectId().abbreviate(6).toString();
+			final String aNew = u.getNewObjectId().abbreviate(6).toString();
 			return aOld + ".." + aNew;
 		}
 
