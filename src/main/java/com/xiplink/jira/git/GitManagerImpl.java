@@ -320,73 +320,41 @@ public class GitManagerImpl implements GitManager {
 		return inactiveMessage;
 	}
 
-	private static File findGitDir(String root) {
-		File current = new File(root).getAbsoluteFile();
-		while (current != null) {
-			if (log.isDebugEnabled())
-				log.debug("gitdir candidate: " + current.getAbsolutePath());
-			final File gitDir = new File(current, ".git");
-			if (isGitDirectory(gitDir) != null)
-				return gitDir;
-			current = current.getParentFile();
-		}
-		// see if it is a bare repository
-		File testDirectory = new File(root + ".git");
-		if (testDirectory.exists()) {
-			File bareDirectory = isGitDirectory(testDirectory);
-			if (bareDirectory == null) {
-				testDirectory = new File(root);
-				if (testDirectory.exists()) {
-					bareDirectory = isGitDirectory(testDirectory);
-				}
-			}
-			return bareDirectory;
-		}
-		return null;
-	}
+    public void activate() {
+        File root = new File(getRoot());
+        RepositoryBuilder builder = new RepositoryBuilder().addCeilingDirectory(root).findGitDir(root);
+        if (builder.getGitDir() == null) {
+            builder.setGitDir(root);
+        }
 
-	// TODO funky logic - why?
-	private static File isGitDirectory(File bareDirectory) {
-		String[] list = bareDirectory.list(new GitDirectoryFilenameFilter());
-		if (list == null)
-		{
-			log.error("Invalid file or IO access problems accessing git directory candidate: " + bareDirectory);			
-		} else if (list.length > 1) {
-			return bareDirectory;
-		}
-		return null;
-	}
+        try {
+            repository = builder.build();
+        } catch (IOException e) {
+            log.error("Connection to git repository " + getRoot() + " failed: " + e.getMessage(), e);
+            // We don't want to throw an exception here because then the system
+            // won't start if the repo is down or there is something wrong
+            // with the configuration. We also still want this repository to
+            // show up in our configuration so the user has a chance to fix
+            // the problem.
+            active = false;
+            inactiveMessage = "Connection to git repository " + getRoot() + " failed: " + e.getMessage();
+            return;
+        }
 
-	public void activate() {
-		File gitdir = findGitDir(getRoot());
-		if (gitdir == null || !gitdir.isDirectory()) {
-			log.error("Connection to git repository " + getRoot() + " failed: "
-					+ (gitdir == null ? "gitdir is null" : "gitdir is a file"));
-			// We don't want to throw an exception here because then the system
-			// won't start if the repo is down or there is something wrong
-			// with the configuration. We also still want this repository to
-			// show up in our configuration so the user has a chance to fix
-			// the problem.
-			active = false;
-			inactiveMessage = "Connection to git repository " + getRoot() + " failed: "
-					+ (gitdir == null ? "gitdir is null" : "gitdir is a file");
-			return;
-		}
-		try {
-                        repository = new RepositoryBuilder().setGitDir(gitdir).build();
-		} catch (IOException e) {
-			log.error("Connection to git repository " + getRoot() + " failed: " + e.getMessage(), e);
-			// We don't want to throw an exception here because then the system
-			// won't start if the repo is down or there is something wrong
-			// with the configuration. We also still want this repository to
-			// show up in our configuration so the user has a chance to fix
-			// the problem.
-			active = false;
-			inactiveMessage = "Connection to git repository " + getRoot() + " failed: " + e.getMessage();
-			return;
-		}
-		active = true;
-	}
+        if (!repository.getObjectsDirectory().exists()) {
+            log.error("Connection to git repository " + getRoot() + " failed: Invalid repository");
+            // We don't want to throw an exception here because then the system
+            // won't start if the repo is down or there is something wrong
+            // with the configuration. We also still want this repository to
+            // show up in our configuration so the user has a chance to fix
+            // the problem.
+            active = false;
+            inactiveMessage = "Connection to git repository " + getRoot() + " failed: Invalid repository";
+            return;
+        }
+
+        active = true;
+    }
 
 	private void deactivate(String message) {
 		if (repository != null) {
