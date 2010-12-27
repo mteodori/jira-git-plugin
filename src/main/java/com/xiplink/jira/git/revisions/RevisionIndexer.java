@@ -257,7 +257,8 @@ public class RevisionIndexer {
 
         if((latestIndexedRevision == null) && !branchName.equals(MASTER_BRANCH)) {
             String masterBranchId = allBranches.get(MASTER_BRANCH);
-            latestIndexedRevision = gitManager.getMergeBase(masterBranchId, branchId).getId().getName();
+            RevCommit base = gitManager.getMergeBase(masterBranchId, branchId);
+            latestIndexedRevision = (base != null ? base.getId().getName() : null);
 
             if (log.isDebugEnabled()) {
                 log.info("Branch was never indexed. Assuming start point: " + latestIndexedRevision);
