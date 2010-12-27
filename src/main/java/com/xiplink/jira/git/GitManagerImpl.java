@@ -37,8 +37,6 @@ import org.eclipse.jgit.transport.TrackingRefUpdate;
 import org.eclipse.jgit.transport.Transport;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -393,24 +391,6 @@ public class GitManagerImpl implements GitManager {
 
 	public GitLinkRenderer getLinkRenderer() {
 		return linkRenderer;
-	}
-
-	protected static String decryptPassword(String encrypted) throws IOException {
-		if (encrypted == null)
-			return null;
-
-		BASE64Decoder decoder = new BASE64Decoder();
-		byte[] result = decoder.decodeBuffer(encrypted);
-
-		return new String(result, 0, result.length);
-	}
-
-	protected static String encryptPassword(String password) {
-		if (password == null)
-			return null;
-
-		BASE64Encoder encoder = new BASE64Encoder();
-		return encoder.encode(password.getBytes());
 	}
 
 	public FileDiff[] getFileDiffs(String revision) {
