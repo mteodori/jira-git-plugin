@@ -36,6 +36,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.ofbiz.core.entity.GenericEntityException;
@@ -68,7 +69,6 @@ public class RevisionIndexer {
     public static final String FIELD_BRANCH = "branch";
     public static final StandardAnalyzer ANALYZER = new StandardAnalyzer();
     public static final int MAX_REVISIONS = 100;
-    private static final String MASTER_BRANCH = "master";
     private final MultipleGitRepositoryManager multipleGitRepositoryManager;
     private final VersionManager versionManager;
     private final IssueManager issueManager;
@@ -255,9 +255,9 @@ public class RevisionIndexer {
             return;
         }
 
-        if((latestIndexedRevision == null) && !branchName.equals(MASTER_BRANCH)) {
-            String masterBranchId = allBranches.get(MASTER_BRANCH);
-            RevCommit base = gitManager.getMergeBase(masterBranchId, branchId);
+        String headId = gitManager.getRefId(Constants.HEAD);
+        if((latestIndexedRevision == null) && !branchId.equals(headId)) {
+            RevCommit base = gitManager.getMergeBase(headId, branchId);
             latestIndexedRevision = (base != null ? base.getId().getName() : null);
 
             if (log.isDebugEnabled()) {

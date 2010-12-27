@@ -5,6 +5,7 @@
  */
 package com.xiplink.jira.git;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -36,4 +37,5 @@ public interface GitManager {
 	
 	FileDiff[] getFileDiffs(String revision);
 
+    String getRefId(String refName) throws IOException;
 }

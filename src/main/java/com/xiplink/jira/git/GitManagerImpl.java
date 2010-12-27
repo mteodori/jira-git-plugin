@@ -106,6 +106,11 @@ public class GitManagerImpl implements GitManager {
 		return branches;
 	}
 
+    public String getRefId(String refName) throws IOException {
+        Ref ref = repository.getRef(refName);
+        return (ref != null ? ref.getObjectId().getName() : null);
+    }
+
     private boolean isRealHead(Ref ref) {
         if(!ref.isSymbolic()) {
             String refName = ref.getName();
