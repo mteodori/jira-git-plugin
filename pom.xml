@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira_git_plugin</artifactId>
-    <version>0.5.3-SNAPSHOT</version>
+    <version>0.5.2</version>
 
     <name>Git JIRA plugin</name>
     <packaging>atlassian-plugin</packaging>
@@ -67,9 +67,22 @@
     </developers>
 
     <scm>
-        <connection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT</connection>
-        <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT</developerConnection>
+        <connection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.2</connection>
+        <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.2</developerConnection>
     </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>atlassian-contrib</id>
+            <name>Atlassian Contrib Repository</name>
+            <url>davs://maven.atlassian.com/contrib</url>
+        </repository>
+        <snapshotRepository>
+            <id>atlassian-contrib-snapshot</id>
+            <name>Atlassian Contrib Snapshot Repository</name>
+            <url>davs://maven.atlassian.com/contrib-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <repositories>
         <repository>
