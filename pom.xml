@@ -69,15 +69,7 @@
     <scm>
         <connection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.2</connection>
         <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.2</developerConnection>
-  </scm>
-    
-    <distributionManagement>
-        <repository>
-            <id>atlassian-public</id>
-            <name>atlassian-public</name>
-            <url>dav:https://maven.atlassian.com/content/repositories/atlassian-public</url>
-        </repository>
-    </distributionManagement>
+    </scm>
 
     <repositories>
         <repository>
@@ -91,7 +83,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-jira-plugin</artifactId>
-                <version>3.0</version>
+				<version>3.2.3</version>
                 <extensions>true</extensions>
                 <configuration>
                     <productVersion>${jira.version}</productVersion>
