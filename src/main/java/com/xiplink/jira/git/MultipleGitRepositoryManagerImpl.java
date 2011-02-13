@@ -57,26 +57,7 @@ public class MultipleGitRepositoryManagerImpl implements MultipleGitRepositoryMa
 		this.jiraPropertySetFactory = jiraPropertySetFactory;
 
 		managerMap = loadGitManagers();
-
-		boolean revisionIndexing = false;
-		for (GitManager mgr : managerMap.values()) {
-			if (mgr.isRevisionIndexing()) {
-				revisionIndexing = true;
-				break;
-			}
-		}
-
-		if (!revisionIndexing) // they might have removed the property - let's check there is no service anyway
-		{
-			try {
-				RevisionIndexService.remove(serviceManager);
-			} catch (Exception e) {
-				throw new InfrastructureException("Failure removing revision indexing service", e);
-			}
-		} else {
-			// create revision indexer once we know we have succeed initializing our repositories
-			revisionIndexer = new RevisionIndexer(this, versionManager, issueManager, permissionManager, serviceManager, indexPathManager);
-		}
+		revisionIndexer = new RevisionIndexer(this, versionManager, issueManager, permissionManager, serviceManager, indexPathManager);
 	}
 
 	/**

@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira_git_plugin</artifactId>
-    <version>0.5.2</version>
+    <version>0.5.3</version>
 
     <name>Git JIRA plugin</name>
     <packaging>atlassian-plugin</packaging>
 
     <properties>
-        <jira.version>4.2</jira.version>
+        <jira.version>4.2.3-b590</jira.version>
         <jira.data.version>4.2</jira.data.version>
     </properties>
 
@@ -67,16 +67,21 @@
     </developers>
 
     <scm>
-        <connection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.2</connection>
-        <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.2</developerConnection>
-  </scm>
-    
+        <connection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.3</connection>
+        <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira_git_plugin-0.5.3</developerConnection>
+    </scm>
+
     <distributionManagement>
         <repository>
-            <id>atlassian-public</id>
-            <name>atlassian-public</name>
-            <url>dav:https://maven.atlassian.com/content/repositories/atlassian-public</url>
+            <id>atlassian-contrib</id>
+            <name>Atlassian Contrib Repository</name>
+            <url>davs://maven.atlassian.com/contrib</url>
         </repository>
+        <snapshotRepository>
+            <id>atlassian-contrib-snapshot</id>
+            <name>Atlassian Contrib Snapshot Repository</name>
+            <url>davs://maven.atlassian.com/contrib-snapshot</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <repositories>
@@ -91,7 +96,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-jira-plugin</artifactId>
-                <version>3.0</version>
+				<version>3.2.3</version>
                 <extensions>true</extensions>
                 <configuration>
                     <productVersion>${jira.version}</productVersion>

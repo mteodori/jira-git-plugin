@@ -1,3 +1,6 @@
+## Workaround for http://jira.atlassian.com/browse/JRA-23563
+#set($field="")
+
 #controlHeader($action 'displayName' $action.getText("git.repository.display.name") true $displayParameters.noHeader)
 <input type="text" id="displayName" name="displayName" #if ($displayName) value="$displayName" #end />
 #controlFooter($action "" $displayParameter.noHeader)

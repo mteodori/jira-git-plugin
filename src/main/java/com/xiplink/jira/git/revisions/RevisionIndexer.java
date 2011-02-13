@@ -725,12 +725,12 @@ public class RevisionIndexer {
         
         long repoId = gitInstance.getId();
 
-        final IndexReader reader = indexAccessor.getIndexReader(getIndexPath());
+        final IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false, null);
 
         try {
-            reader.deleteDocuments(new Term(FIELD_REPOSITORY, Long.toString(repoId)));
+            writer.deleteDocuments(new Term(FIELD_REPOSITORY, Long.toString(repoId)));
         } finally {
-            reader.close();
+            writer.close();
         }
     }
 }
