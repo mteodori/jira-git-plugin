@@ -1,14 +1,14 @@
 package com.xiplink.jira.git;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.log4j.Logger;
-
 import com.atlassian.core.util.ClassLoaderUtils;
 import com.atlassian.jira.InfrastructureException;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * exists to load GitManagers the old way so that the
@@ -36,8 +36,7 @@ public class GPropertiesLoader {
 		if (defaultProps != null) {
 			propertyList.add(defaultProps);
 		} else {
-			log.error("Could not load properties from " + PROPERTIES_FILE_NAME);
-			throw new InfrastructureException("Could not load properties from " + PROPERTIES_FILE_NAME);
+			return Collections.emptyList();
 		}
 		GitProperties prop;
 		int i = 1;
