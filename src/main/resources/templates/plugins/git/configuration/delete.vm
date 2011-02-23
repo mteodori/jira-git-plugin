@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>$action.getText("git.delete.repository")</title>
+    <title>$i18n.getText("git.delete.repository")</title>
     <meta name="decorator" content="admin" />
   </head>
   <body>
@@ -12,17 +12,17 @@
 								 <tbody>
 									 <tr>
 										 <td class="jiraformheader">
-											 <h3 class="formtitle">$action.getText("git.delete.repository")</h3>
+											 <h3 class="formtitle">$i18n.getText("git.delete.repository")</h3>
 										 </td>
 									 </tr>
 									 <tr>
 											<td class="jiraformheader">
 												<input type="hidden" name="repoId" value="$repoId" />
-												$action.getText("git.confirm.delete.repository", $gitManager.displayName)
+												$i18n.getText("git.confirm.delete.repository", $gitManager.displayName)
 											</td>
 								 <tr>
 										 <td class="fullyCentered jiraformfooter" >
-								 <input type="submit" name="delete" value="$action.getText("common.words.delete")" accesskey="S" title="Press Alt+Shift+S to submit form" class="spaced" />
+								 <input type="submit" name="delete" value="$i18n.getText("common.words.delete")" accesskey="S" title="Press Alt+Shift+S to submit form" class="spaced" />
 											 <input id="cancelButton"  type="button" accesskey="`" title="Cancel (Alt+Shift + `)" name="ViewGitRepositories.jspa" value="Cancel" onclick="location.href='ViewGitRepositories.jspa'" />
 										 </td>
 									 </tr>

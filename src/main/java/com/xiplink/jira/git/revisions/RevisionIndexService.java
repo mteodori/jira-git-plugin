@@ -64,7 +64,7 @@ public class RevisionIndexService extends AbstractService
 
     private MultipleGitRepositoryManager getMultipleGitRepositoryManager()
     {
-        return (MultipleGitRepositoryManager) ComponentManager.getInstance().getContainer().getComponentInstance(MultipleGitRepositoryManager.class);
+        return ComponentManager.getOSGiComponentInstanceOfType(MultipleGitRepositoryManager.class);
     }
 
     public boolean isUnique()

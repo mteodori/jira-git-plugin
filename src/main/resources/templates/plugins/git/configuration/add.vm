@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>$action.getText("git.add.repository")</title>
+    <title>$i18n.getText("git.add.repository")</title>
     <meta name="decorator" content="admin" />
   </head>
   <body>
@@ -12,7 +12,7 @@
 								 <tbody>
 									 <tr>
 										 <td class="jiraformheader" colspan="2">
-											 <h3 class="formtitle">$action.getText("git.add.repository")</h3>
+											 <h3 class="formtitle">$i18n.getText("git.add.repository")</h3>
 										 </td>
 									 </tr>
 									 <tr>
@@ -40,7 +40,7 @@
 									 #parse("templates/plugins/git/configuration/properties.vm")
 								 <tr>
 										 <td colspan="2" class="fullyCentered jiraformfooter" >
-								 <input type="submit" name="add" value="$action.getText("common.forms.add")" accesskey="S" title="Press Alt+Shift+S to submit form" class="spaced" />
+								 <input type="submit" name="add" value="$i18n.getText("common.forms.add")" accesskey="S" title="Press Alt+Shift+S to submit form" class="spaced" />
 											 <input id="cancelButton"  type="button" accesskey="`" title="Cancel (Alt+Shift + `)" name="ViewGitRepositories.jspa" value="Cancel" onclick="location.href='ViewGitRepositories.jspa'" />
 										 </td>
 									 </tr>

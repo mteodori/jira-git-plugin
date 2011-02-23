@@ -1,14 +1,5 @@
 package com.xiplink.jira.git;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.opensymphony.module.propertyset.PropertyException;
-import org.apache.log4j.Logger;
-
 import com.atlassian.jira.InfrastructureException;
 import com.atlassian.jira.config.util.IndexPathManager;
 import com.atlassian.jira.issue.IssueManager;
@@ -17,9 +8,16 @@ import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.propertyset.JiraPropertySetFactory;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.service.ServiceManager;
+import com.opensymphony.module.propertyset.PropertyException;
 import com.opensymphony.module.propertyset.PropertySet;
-import com.xiplink.jira.git.revisions.RevisionIndexService;
 import com.xiplink.jira.git.revisions.RevisionIndexer;
+import org.apache.log4j.Logger;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is a wrapper class for many GitManager. Configured via {@link GPropertiesLoader#PROPERTIES_FILE_NAME}

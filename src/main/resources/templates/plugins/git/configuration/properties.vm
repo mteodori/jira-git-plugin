@@ -1,34 +1,34 @@
 ## Workaround for http://jira.atlassian.com/browse/JRA-23563
 #set($field="")
 
-#controlHeader($action 'displayName' $action.getText("git.repository.display.name") true $displayParameters.noHeader)
+#controlHeader($action 'displayName' $i18n.getText("git.repository.display.name") true $displayParameters.noHeader)
 <input type="text" id="displayName" name="displayName" #if ($displayName) value="$displayName" #end />
 #controlFooter($action "" $displayParameter.noHeader)
 
 <tr>
-  <td colspan=2 bgcolor=f0f0f0><b>$action.getText("git.repository.details")</b></td>
+  <td colspan=2 bgcolor=f0f0f0><b>$i18n.getText("git.repository.details")</b></td>
 </tr>
 
-#controlHeader($action 'root' $action.getText("git.repository.root") true $displayParameters.noHeader)
+#controlHeader($action 'root' $i18n.getText("git.repository.root") true $displayParameters.noHeader)
 <input type="text" id="root" name="root" #if ($root) value="$root" #end size="60" />
-#controlFooter($action $action.getText("git.repository.root.description") $displayParameter.noHeader)
+#controlFooter($action $i18n.getText("git.repository.root.description") $displayParameter.noHeader)
 
-#controlHeader($action 'origin' $action.getText("git.repository.origin") true $displayParameters.noHeader)
+#controlHeader($action 'origin' $i18n.getText("git.repository.origin") true $displayParameters.noHeader)
 <input type="text" id="origin" name="origin" #if ($origin) value="$origin" #end size="60" />
-#controlFooter($action $action.getText("git.repository.origin.description") $displayParameter.noHeader)
+#controlFooter($action $i18n.getText("git.repository.origin.description") $displayParameter.noHeader)
 
-#controlHeader($action 'revisionIndexing' $action.getText("git.repository.revision.indexing") true $displayParameters.noHeader)
-<input id="revisionIndexingTrue" type="radio" value="true" name="revisionIndexing" #if ($revisionIndexing) checked="checked" #end><label for="revisionIndexingTrue">$action.getText("git.repository.revision.indexing.enabled")</label>
+#controlHeader($action 'revisionIndexing' $i18n.getText("git.repository.revision.indexing") true $displayParameters.noHeader)
+<input id="revisionIndexingTrue" type="radio" value="true" name="revisionIndexing" #if ($revisionIndexing) checked="checked" #end><label for="revisionIndexingTrue">$i18n.getText("git.repository.revision.indexing.enabled")</label>
 &nbsp;
-<input id="revisionIndexingFalse" type="radio" value="false" name="revisionIndexing" #if (!$revisionIndexing) checked="checked" #end><label for="revisionIndexingFalse">$action.getText("git.repository.revision.indexing.disabled")</label>
+<input id="revisionIndexingFalse" type="radio" value="false" name="revisionIndexing" #if (!$revisionIndexing) checked="checked" #end><label for="revisionIndexingFalse">$i18n.getText("git.repository.revision.indexing.disabled")</label>
 #controlFooter($action '' $displayParameter.noHeader)
 
-#controlHeader($action 'revisionCacheSize' $action.getText("git.repository.revision.cache.size") true $displayParameters.noHeader)
+#controlHeader($action 'revisionCacheSize' $i18n.getText("git.repository.revision.cache.size") true $displayParameters.noHeader)
 <input type="text" id="revisionCacheSize" name="revisionCacheSize" #if ($revisionCacheSize) value="$revisionCacheSize" #end />
-#controlFooter($action $action.getText("git.repository.revision.cache.size.description") $displayParameters.noHeader)
+#controlFooter($action $i18n.getText("git.repository.revision.cache.size.description") $displayParameters.noHeader)
 
 <tr>
-    <td colspan=2 bgcolor=f0f0f0><b>$action.getText("git.repository.web.linking")</b></td>
+    <td colspan=2 bgcolor=f0f0f0><b>$i18n.getText("git.repository.web.linking")</b></td>
 </tr>
 
 <script language="JavaScript" type="text/javascript">
@@ -75,31 +75,31 @@
     }
 </script>
 
-#controlHeader($action 'webLinkType' $action.getText("git.repository.web.link.type") false $displayParameters.noHeader)
+#controlHeader($action 'webLinkType' $i18n.getText("git.repository.web.link.type") false $displayParameters.noHeader)
 <select id="webLinkType" name="webLinkType" onchange="handleWebLinkTypeChanged()">
     <option></option>
     #foreach ($currentType in $webLinkTypes)
         <option value="$currentType.key" #if ( $webLinkType && $webLinkType == $currentType.key ) selected="selected" #end>$currentType.name</option>
     #end
 </select>
-#controlFooter($action $action.getText("git.repository.web.link.type.description") $displayParameters.noHeader)
+#controlFooter($action $i18n.getText("git.repository.web.link.type.description") $displayParameters.noHeader)
 
-#controlHeader($action 'viewFormat' $action.getText("git.repository.view.format") false $displayParameters.noHeader)
+#controlHeader($action 'viewFormat' $i18n.getText("git.repository.view.format") false $displayParameters.noHeader)
 <input type="text" id="viewFormat" name="viewFormat" #if ($viewFormat) value="$viewFormat" #end  size="60"/>
 #controlFooter($action '' $displayParameters.noHeader)
 
-#controlHeader($action 'changesetFormat' $action.getText("git.repository.changeset.format") false $displayParameters.noHeader)
+#controlHeader($action 'changesetFormat' $i18n.getText("git.repository.changeset.format") false $displayParameters.noHeader)
 <input type="text" id="changesetFormat" name="changesetFormat" #if ($changesetFormat) value="$changesetFormat" #end  size="60"/>
 #controlFooter($action '' $displayParameters.noHeader)
 
-#controlHeader($action 'fileAddedFormat' $action.getText("git.repository.file.added.format") false $displayParameters.noHeader)
+#controlHeader($action 'fileAddedFormat' $i18n.getText("git.repository.file.added.format") false $displayParameters.noHeader)
 <input type="text" id="fileAddedFormat" name="fileAddedFormat" #if ($fileAddedFormat) value="$fileAddedFormat" #end  size="60"/>
 #controlFooter($action '' $displayParameters.noHeader)
 
-#controlHeader($action 'fileModifiedFormat' $action.getText("git.repository.file.modified.format") false $displayParameters.noHeader)
+#controlHeader($action 'fileModifiedFormat' $i18n.getText("git.repository.file.modified.format") false $displayParameters.noHeader)
 <input type="text" id="fileModifiedFormat" name="fileModifiedFormat" #if ($fileModifiedFormat) value="$fileModifiedFormat" #end  size="60"/>
 #controlFooter($action '' $displayParameters.noHeader)
 
-#controlHeader($action 'fileDeletedFormat' $action.getText("git.repository.file.deleted.format") false $displayParameters.noHeader)
+#controlHeader($action 'fileDeletedFormat' $i18n.getText("git.repository.file.deleted.format") false $displayParameters.noHeader)
 <input type="text" id="fileDeletedFormat" name="fileDeletedFormat" #if ($fileDeletedFormat) value="$fileDeletedFormat" #end  size="60"/>
 #controlFooter($action '' $displayParameters.noHeader)

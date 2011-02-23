@@ -23,7 +23,6 @@ import com.xiplink.jira.git.GitManager;
 import com.xiplink.jira.git.MultipleGitRepositoryManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -67,7 +66,6 @@ public class RevisionIndexer {
     public static final String FIELD_PROJECTKEY = "project";
     public static final String FIELD_REPOSITORY = "repository";
     public static final String FIELD_BRANCH = "branch";
-    public static final StandardAnalyzer ANALYZER = new StandardAnalyzer();
     public static final int MAX_REVISIONS = 100;
     private final MultipleGitRepositoryManager multipleGitRepositoryManager;
     private final VersionManager versionManager;
@@ -133,7 +131,7 @@ public class RevisionIndexer {
         boolean indexExists = indexDirectoryExists();
         if (getIndexPath() != null && !indexExists) {
             try {
-                indexAccessor.getIndexWriter(getIndexPath(), true, ANALYZER).close();
+                indexAccessor.getIndexWriter(getIndexPath(), true).close();
                 return true;
             } catch (Exception e) {
                 log.error("Could not create the index directory for the Git plugin.", e);
@@ -275,7 +273,7 @@ public class RevisionIndexer {
 
         Collection<RevCommit> logEntries = gitManager.getLogEntries(latestIndexedRevision, branchId);
 
-        IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false, ANALYZER);
+        IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false);
 
         try {
             IndexReader reader = indexAccessor.getIndexReader(getIndexPath());
@@ -725,7 +723,7 @@ public class RevisionIndexer {
         
         long repoId = gitInstance.getId();
 
-        final IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false, null);
+        final IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false);
 
         try {
             writer.deleteDocuments(new Term(FIELD_REPOSITORY, Long.toString(repoId)));

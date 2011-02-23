@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>$action.getText("git.repository.activate")</title>
+    <title>$i18n.getText("git.repository.activate")</title>
     <meta name="decorator" content="admin" />
   </head>
   <body>
@@ -12,12 +12,12 @@
 								 <tbody>
 									 <tr>
 										 <td class="jiraformheader">
-											 <h3 class="formtitle">$action.getText("git.repository.activate")</h3>
+											 <h3 class="formtitle">$i18n.getText("git.repository.activate")</h3>
 										 </td>
 									 </tr>
 									 <tr>
 											<td class="jiraformheader">
-												$action.getText("git.repository.activate.description")
+												$i18n.getText("git.repository.activate.description")
 											</td>
 									 </tr>
 									 #if ($action.hasAnyErrors())
@@ -33,7 +33,7 @@
 										 #end
 									 #else
 										 <tr>
-											 <td bgcolor=ffffff>$action.getText("git.repository.activation.successful")</td>
+											 <td bgcolor=ffffff>$i18n.getText("git.repository.activation.successful")</td>
 										 </tr>
 									 #end
 									 </tr>
@@ -42,7 +42,7 @@
 									 </tr>
 								 <tr>
 										 <td class="fullyCentered jiraformfooter" >
-								 <input type="submit" name="ok" value="$action.getText("admin.common.words.ok")" accesskey="S" title="Press Alt+Shift+S to submit form" class="spaced" />
+								 <input type="submit" name="ok" value="$i18n.getText("admin.common.words.ok")" accesskey="S" title="Press Alt+Shift+S to submit form" class="spaced" />
 										 </td>
 									 </tr>
 								 </tbody>

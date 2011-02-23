@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>$action.getText("git.repositories")</title>
+    <title>$i18n.getText("git.repositories")</title>
     <meta name="decorator" content="admin" />
   </head>
 
@@ -10,15 +10,15 @@
     <tbody>
       <tr>
         <td class="jiraformheader">
-          <h3 class="formtitle">$action.getText("git.repositories")</h3>
+          <h3 class="formtitle">$i18n.getText("git.repositories")</h3>
         </td>
       </tr>
       <tr>
         <td class="jiraformbody">
-          <p>$action.getText("git.repositories.description")</p>
+          <p>$i18n.getText("git.repositories.description")</p>
           <p>
             <img width="8" height="8" border="0" src="/jira/images/icons/bullet_creme.gif"/>
-            <a href="AddGitRepository!default.jspa"><b>$action.getText("common.forms.add")</b></a>
+            <a href="AddGitRepository!default.jspa"><b>$i18n.getText("common.forms.add")</b></a>
           </p>
         </td>
       </tr>
@@ -32,13 +32,13 @@
         <table border="0" cellpadding="3" cellspacing="1" width=100%>
             <tr bgcolor=f0f0f0>
               <td class="colHeaderLink">
-                <b>$action.getText("common.words.name")</b>
+                <b>$i18n.getText("common.words.name")</b>
               </td>
               <td class="colHeaderLink">
-                <b>$action.getText("admin.common.words.details")</b>
+                <b>$i18n.getText("admin.common.words.details")</b>
               </td>
               <td class="colHeaderLink">
-                <b>$action.getText("common.words.operations")</b>
+                <b>$i18n.getText("common.words.operations")</b>
               </td>
             </tr>
 
@@ -54,48 +54,48 @@
                     <b>$repo.getDisplayName()</b>
                 </td>
                 <td valign=top>
-                    <b>$action.getText("git.repository.root")</b>: $repo.getRoot()<br>
-                    <b>$action.getText("git.repository.origin")</b>: $repo.getOrigin()<br>
-                    <b>$action.getText("git.repository.status")</b>: #if ($repo.isActive()) $action.getText("admin.common.words.active") #else $action.getText("admin.common.words.inactive") ($repo.getInactiveMessage()) #end<br>
+                    <b>$i18n.getText("git.repository.root")</b>: $repo.getRoot()<br>
+                    <b>$i18n.getText("git.repository.origin")</b>: $repo.getOrigin()<br>
+                    <b>$i18n.getText("git.repository.status")</b>: #if ($repo.isActive()) $i18n.getText("admin.common.words.active") #else $i18n.getText("admin.common.words.inactive") ($repo.getInactiveMessage()) #end<br>
                     #if ($repo.isWebLinking())
-                      <br><b>$action.getText("admin.cvsmodules.viewcvs.root.param")</b>: $repo.getWebLink()
+                      <br><b>$i18n.getText("admin.cvsmodules.viewcvs.root.param")</b>: $repo.getWebLink()
                     #end
                     #if ($repo.getViewLinkFormat())
                       #if ($repo.getViewLinkFormat().getCopyFromFormat())
-                      <br><b>$action.getText("git.linkformat.path")</b>: $repo.getViewLinkFormat().getCopyFromFormat()
+                      <br><b>$i18n.getText("git.linkformat.path")</b>: $repo.getViewLinkFormat().getCopyFromFormat()
                       #end
                       #if ($repo.getViewLinkFormat().getChangesetFormat())
-                      <br><b>$action.getText("git.linkformat.changeset")</b>: $repo.getViewLinkFormat().getChangesetFormat()
+                      <br><b>$i18n.getText("git.linkformat.changeset")</b>: $repo.getViewLinkFormat().getChangesetFormat()
                       #end
                       #if ($repo.getViewLinkFormat().getFileAddedFormat())
-                      <br><b>$action.getText("git.linkformat.file.added")</b>: $repo.getViewLinkFormat().getFileAddedFormat()
+                      <br><b>$i18n.getText("git.linkformat.file.added")</b>: $repo.getViewLinkFormat().getFileAddedFormat()
                       #end
                       #if ($repo.getViewLinkFormat().getFileModifiedFormat())
-                      <br><b>$action.getText("git.linkformat.file.modified")</b>: $repo.getViewLinkFormat().getFileModifiedFormat()
+                      <br><b>$i18n.getText("git.linkformat.file.modified")</b>: $repo.getViewLinkFormat().getFileModifiedFormat()
                       #end
                       #if ($repo.getViewLinkFormat().getFileReplacedFormat())
-                      <br><b>$action.getText("git.linkformat.file.replaced")</b>: $repo.getViewLinkFormat().getFileReplacedFormat()
+                      <br><b>$i18n.getText("git.linkformat.file.replaced")</b>: $repo.getViewLinkFormat().getFileReplacedFormat()
                       #end
                       #if ($repo.getViewLinkFormat().getFileDeletedFormat())
-                      <br><b>$action.getText("git.linkformat.file.deleted")</b>: $repo.getViewLinkFormat().getFileDeletedFormat()
+                      <br><b>$i18n.getText("git.linkformat.file.deleted")</b>: $repo.getViewLinkFormat().getFileDeletedFormat()
                       #end
                     #end
                 </td>
 
                 <td valign=top align=left>
-                    <a href="UpdateGitRepository!default.jspa?repoId=$repo.getId()">$action.getText("common.words.edit")</a>
+                    <a href="UpdateGitRepository!default.jspa?repoId=$repo.getId()">$i18n.getText("common.words.edit")</a>
                     #if (!$repo.isActive())
-                    | <a href="ActivateGitRepository.jspa?repoId=$repo.getId()">$action.getText("admin.common.words.activate")</a>
+                    | <a href="ActivateGitRepository.jspa?repoId=$repo.getId()">$i18n.getText("admin.common.words.activate")</a>
                     #end
-                    | <a href="DeleteGitRepository!default.jspa?repoId=$repo.getId()">$action.getText("common.words.delete")</a>
-                    | <a href="ResetLastIndexedRevisions!default.jspa?repoId=$repo.getId()">$action.getText("git.reset")</a>
+                    | <a href="DeleteGitRepository!default.jspa?repoId=$repo.getId()">$i18n.getText("common.words.delete")</a>
+                    | <a href="ResetLastIndexedRevisions!default.jspa?repoId=$repo.getId()">$i18n.getText("git.reset")</a>
                 </td>
             </tr>
             #end
             #if ($action.getRepositories().size() == 0)
                 <tr>
                     <td colspan=4 bgcolor=ffffff>
-                        $action.getText("git.no.repositories.configured")
+                        $i18n.getText("git.no.repositories.configured")
                     </td>
                 </tr>
             #end

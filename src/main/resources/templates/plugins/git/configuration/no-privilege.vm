@@ -3,7 +3,7 @@
  		<div class="errorArea">
 			<h4>Error</h4>
 			<ul>
-					<li>$action.getText("git.admin.privilege.required")</li>
+					<li>$i18n.getText("git.admin.privilege.required")</li>
 			</ul>
     </div>
    </td>
