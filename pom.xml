@@ -10,8 +10,8 @@
     <packaging>atlassian-plugin</packaging>
 
     <properties>
-        <jira.version>4.2.3-b590</jira.version>
-        <jira.data.version>4.2</jira.data.version>
+        <jira.version>4.3</jira.version>
+        <jira.data.version>4.3</jira.data.version>
     </properties>
 
     <description>Git Jira plugin</description>
