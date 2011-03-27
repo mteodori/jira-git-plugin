@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira-git-plugin</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.6</version>
 
     <name>JIRA Git plugin</name>
     <packaging>atlassian-plugin</packaging>
@@ -72,8 +72,8 @@
     </developers>
 
     <scm>
-        <connection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT</connection>
-        <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT</developerConnection>
+        <connection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira-git-plugin-0.6</connection>
+        <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira-git-plugin-0.6</developerConnection>
     </scm>
 
     <distributionManagement>
