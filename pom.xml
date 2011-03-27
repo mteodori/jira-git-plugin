@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira-git-plugin</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.6</version>
 
     <name>JIRA Git plugin</name>
     <packaging>atlassian-plugin</packaging>
 
     <properties>
-        <jira.version>4.2.3-b590</jira.version>
-        <jira.data.version>4.2</jira.data.version>
+        <jira.version>4.3</jira.version>
+        <jira.data.version>4.3</jira.data.version>
     </properties>
 
     <description>Git Jira plugin</description>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>0.9.3</version>
+            <version>0.10.1</version>
         </dependency>
         <dependency>
             <groupId>com.jcraft</groupId>
@@ -72,8 +72,8 @@
     </developers>
 
     <scm>
-        <connection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT</connection>
-        <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT</developerConnection>
+        <connection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira-git-plugin-0.6</connection>
+        <developerConnection>scm:svn:https://studio.plugins.atlassian.com/svn/JGIT/tags/jira-git-plugin-0.6</developerConnection>
     </scm>
 
     <distributionManagement>
