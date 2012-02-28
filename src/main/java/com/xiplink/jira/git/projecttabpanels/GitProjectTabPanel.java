@@ -17,7 +17,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import webwork.action.ActionContext;
 
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
-import com.atlassian.jira.plugin.projectpanel.impl.GenericProjectTabPanel;
+import com.atlassian.jira.plugin.projectpanel.impl.AbstractProjectTabPanel;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.browse.BrowseContext;
 import com.atlassian.jira.project.version.Version;
@@ -26,8 +26,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.web.action.ProjectActionSupport;
-import com.atlassian.jira.web.bean.I18nBean;
-import com.opensymphony.user.User;
+import com.atlassian.crowd.embedded.api.User;
 import com.xiplink.jira.git.MultipleGitRepositoryManager;
 import com.xiplink.jira.git.revisions.RevisionIndexer;
 
@@ -37,7 +36,7 @@ import com.xiplink.jira.git.revisions.RevisionIndexer;
  * @author Rolf Staflin
  * @version $Id$
  */
-public class GitProjectTabPanel extends GenericProjectTabPanel implements ProjectTabPanel {
+public class GitProjectTabPanel extends AbstractProjectTabPanel implements ProjectTabPanel {
 
 	private static Logger log = Logger.getLogger(GitProjectTabPanel.class);
 
@@ -125,7 +124,7 @@ public class GitProjectTabPanel extends GenericProjectTabPanel implements Projec
 
         startingParams.put("project", project);
         startingParams.put("projectKey", key);
-        startingParams.put("action", new I18nBean(user));
+        startingParams.put("action", user);
 
 		// Merge with velocity template and return HTML.
 		return descriptor.getHtml("view", startingParams);
@@ -208,10 +207,10 @@ public class GitProjectTabPanel extends GenericProjectTabPanel implements Projec
 	 * @param project							This current project
 	 * @return true if the tab should be shown, false if not
 	 */
-	public boolean showPanel(ProjectActionSupport projectActionSupport, Project project) {
-		User user = projectActionSupport.getRemoteUser();
+	public boolean showPanel(BrowseContext browseContext) {
+		User user = browseContext.getUser();
 		return multipleGitRepositoryManager.isIndexingRevisions() &&
-						permissionManager.hasPermission(Permissions.VIEW_VERSION_CONTROL, project, user);
+						permissionManager.hasPermission(Permissions.VIEW_VERSION_CONTROL, browseContext.getProject(), user);
 	}
 
 	/**
@@ -227,4 +226,5 @@ public class GitProjectTabPanel extends GenericProjectTabPanel implements Projec
 	public VersionManager getVersionManager() {
 		return versionManager;
 	}
+
 }

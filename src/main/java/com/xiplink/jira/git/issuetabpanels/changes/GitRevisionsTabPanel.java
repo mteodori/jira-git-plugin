@@ -14,14 +14,16 @@ import com.xiplink.jira.git.revisions.RevisionInfo;
 import org.apache.log4j.Logger;
 
 import com.atlassian.core.util.collection.EasyList;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.action.IssueActionComparator;
 import com.atlassian.jira.issue.tabpanels.GenericMessageAction;
 import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel;
+import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 
-import com.opensymphony.user.User;
+import com.atlassian.crowd.embedded.api.User;
 import com.xiplink.jira.git.MultipleGitRepositoryManager;
 
 public class GitRevisionsTabPanel extends AbstractIssueTabPanel {
@@ -35,7 +37,7 @@ public class GitRevisionsTabPanel extends AbstractIssueTabPanel {
 		this.permissionManager = permissionManager;
 	}
 
-    public List<GitRevisionAction> getActions(Issue issue, User remoteUser) {
+    public List<IssueAction> getActions(Issue issue, User remoteUser) {
         try {
             RevisionIndexer revisionIndexer = multipleGitRepositoryManager.getRevisionIndexer();
 
@@ -47,7 +49,7 @@ public class GitRevisionsTabPanel extends AbstractIssueTabPanel {
 				GenericMessageAction action = new GenericMessageAction(getText("no.log.entries.message"));
 				return EasyList.build(action);
 			} else {
-				List<GitRevisionAction> actions = new ArrayList<GitRevisionAction>(logEntries.size());
+				List<IssueAction> actions = new ArrayList<IssueAction>(logEntries.size());
 				for (RevisionInfo entry : logEntries) {
                     actions.add(new GitRevisionAction(entry.getCommit(), multipleGitRepositoryManager,
                             descriptor, entry.getRepositoryId(), entry.getBranch()));
@@ -64,7 +66,7 @@ public class GitRevisionsTabPanel extends AbstractIssueTabPanel {
 	}
 
     protected String getText(String key) {
-        return descriptor.getI18nBean().getText(key);
+        return ComponentAccessor.getApplicationProperties().getText(key);
     }
 
     public boolean showPanel(Issue issue, User remoteUser) {

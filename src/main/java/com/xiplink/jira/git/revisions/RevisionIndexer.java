@@ -5,7 +5,7 @@
  */
 package com.xiplink.jira.git.revisions;
 
-import com.atlassian.jira.InfrastructureException;
+import com.atlassian.core.exception.InfrastructureException;
 import com.atlassian.jira.config.util.IndexPathManager;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
@@ -16,7 +16,7 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.service.ServiceManager;
 import com.atlassian.jira.util.JiraKeyUtils;
-import com.opensymphony.user.User;
+import com.atlassian.crowd.embedded.api.User;
 import com.opensymphony.util.TextUtils;
 import com.xiplink.jira.git.GPropertiesLoader;
 import com.xiplink.jira.git.GitManager;
@@ -616,14 +616,8 @@ public class RevisionIndexer {
         // Find all isuses affected by and fixed by any of the versions:
         Collection<GenericValue> issues = new HashSet<GenericValue>();
 
-        try {
-            issues.addAll(versionManager.getFixIssues(version));
-            issues.addAll(versionManager.getAffectsIssues(version));
-        } catch (GenericEntityException e) {
-            log.error("getLogEntriesByVersion() Caught exception while looking up issues related to version "
-                    + version.getName() + "!", e);
-            // Keep going. We may have got some issues stored.
-        }
+        issues.addAll(versionManager.getFixIssues(version));
+        issues.addAll(versionManager.getAffectsIssues(version));
 
         // Construct a query with all the issue keys. Make sure to increase the maximum number of clauses if needed.
         int maxClauses = BooleanQuery.getMaxClauseCount();

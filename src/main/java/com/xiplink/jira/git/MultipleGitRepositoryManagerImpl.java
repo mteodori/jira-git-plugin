@@ -1,6 +1,6 @@
 package com.xiplink.jira.git;
 
-import com.atlassian.jira.InfrastructureException;
+import com.atlassian.core.exception.InfrastructureException;
 import com.atlassian.jira.config.util.IndexPathManager;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.changehistory.ChangeHistoryManager;

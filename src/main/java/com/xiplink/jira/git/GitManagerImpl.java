@@ -5,14 +5,14 @@
  */
 package com.xiplink.jira.git;
 
-import com.atlassian.jira.InfrastructureException;
+import com.atlassian.core.exception.InfrastructureException;
 import com.atlassian.jira.util.JiraKeyUtils;
+import com.atlassian.jira.util.collect.LRUMap;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.util.TextUtils;
 import com.xiplink.jira.git.linkrenderer.GitLinkRenderer;
 import com.xiplink.jira.git.linkrenderer.LinkFormatRenderer;
 import com.xiplink.jira.git.linkrenderer.NullLinkRenderer;
-import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.errors.CorruptObjectException;
@@ -140,7 +140,7 @@ public class GitManagerImpl implements GitManager {
 				cacheSize = getRevisioningCacheSize();
 			}
 
-			logEntryCache = new LRUMap(cacheSize);
+			logEntryCache = LRUMap.newLRUMap(cacheSize);
 		}
 
 		activate();

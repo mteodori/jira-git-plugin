@@ -7,7 +7,7 @@ package com.xiplink.jira.git.revisions;
 
 import com.atlassian.configurable.ObjectConfiguration;
 import com.atlassian.configurable.ObjectConfigurationException;
-import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.service.AbstractService;
 import com.atlassian.jira.service.ServiceManager;
 import com.xiplink.jira.git.MultipleGitRepositoryManager;
@@ -64,7 +64,7 @@ public class RevisionIndexService extends AbstractService
 
     private MultipleGitRepositoryManager getMultipleGitRepositoryManager()
     {
-        return ComponentManager.getOSGiComponentInstanceOfType(MultipleGitRepositoryManager.class);
+        return ComponentAccessor.getOSGiComponentInstanceOfType(MultipleGitRepositoryManager.class);
     }
 
     public boolean isUnique()

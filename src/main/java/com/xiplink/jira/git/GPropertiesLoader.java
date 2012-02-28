@@ -1,7 +1,7 @@
 package com.xiplink.jira.git;
 
 import com.atlassian.core.util.ClassLoaderUtils;
-import com.atlassian.jira.InfrastructureException;
+import com.atlassian.core.exception.InfrastructureException;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package com.xiplink.jira.git.revisions;
 
-import com.atlassian.jira.InfrastructureException;
+import com.atlassian.core.exception.InfrastructureException;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
