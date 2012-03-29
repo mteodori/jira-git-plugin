@@ -3,10 +3,15 @@
     <plugin-info>
         <description>JIRA GIT Plugin</description>
         <version>${project.version}</version>
-        <application-version min="4.0" max="4.2"/>
+        <application-version min="5.0"/>
         <vendor name="Reliadev" url="http://www.reliadev.com"/>
 	    <param name="configure.url">/secure/ViewGitRepositories.jspa</param>
     </plugin-info>
+
+    <resource type="i18n" name="GitActionSupport" location="com.xiplink.jira.git.action.GitActionSupport" />
+    <!-- this property file contains i18n keys for the panel -->
+    <resource type="i18n" name="projecttabpanels-git_jira_plugin" location="templates.plugins.git.projecttabpanels.git_jira_plugin"/>
+    <resource type="i18n" name="issuetabpanels-git_jira_plugin" location="templates.plugins.git.issuetabpanels.git_jira_plugin"/>
 
     <issue-tabpanel key="git-commits-tabpanel" name="Git Commits Issue Tab Panel" class="com.xiplink.jira.git.issuetabpanels.changes.GitRevisionsTabPanel">
         <resource type="i18n" name="i18n" location="templates.plugins.git.issuetabpanels.git_jira_plugin"/>
@@ -54,14 +59,14 @@
                 <view name="error">/templates/plugins/git/configuration/edit.vm</view>
             </action>
             <action name="com.xiplink.jira.git.action.DeleteGitRepositoryAction" alias="DeleteGitRepository">
-							<view name="input">/templates/plugins/git/configuration/delete.vm</view>
-                            <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
-							<view name="error">/templates/plugins/git/configuration/delete.vm</view>
+                <view name="input">/templates/plugins/git/configuration/delete.vm</view>
+                <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
+                <view name="error">/templates/plugins/git/configuration/delete.vm</view>
             </action>
             <action name="com.xiplink.jira.git.action.ResetLastIndexedRevisionsAction" alias="ResetLastIndexedRevisions">
-							<view name="input">/templates/plugins/git/configuration/reset.vm</view>
-                            <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
-							<view name="error">/templates/plugins/git/configuration/reset.vm</view>
+                <view name="input">/templates/plugins/git/configuration/reset.vm</view>
+                <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>
+                <view name="error">/templates/plugins/git/configuration/reset.vm</view>
             </action>
             <action name="com.xiplink.jira.git.action.ActivateGitRepositoryAction" alias="ActivateGitRepository">
                 <view name="permissionviolation">/templates/plugins/git/configuration/no-privilege.vm</view>

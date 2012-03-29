@@ -1,4 +1,4 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -10,8 +10,8 @@
     <packaging>atlassian-plugin</packaging>
 
     <properties>
-        <jira.version>5.0</jira.version>
-        <jira.data.version>5.0</jira.data.version>
+        <jira.version>5.0.1</jira.version>
+        <jira.data.version>5.0.1</jira.data.version>
     </properties>
 
     <description>Git Jira plugin</description>
@@ -61,14 +61,17 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>2.9.2</version>
+            <version>3.2.0</version>
+            <scope>provided</scope>
         </dependency>
+<!--
         <dependency>
             <groupId>opensymphony</groupId>
             <artifactId>oscore</artifactId>
             <version>2.2.7-atlassian-1</version>
             <scope>compile</scope>
         </dependency>
+-->
     </dependencies>
 
     <developers>
@@ -103,17 +106,27 @@
 
     <repositories>
         <repository>
+            <id>atlassian-public-repository</id>
+            <url>http://maven.atlassian.com/repository/public</url>
+        </repository>
+        <repository>
             <id>jgit-repository</id>
             <url>http://download.eclipse.org/jgit/maven</url>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>atlassian-public-repository</id>
+            <url>https://maven.atlassian.com/content/groups/public</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-jira-plugin</artifactId>
-                <version>3.8</version>
+                <version>3.9.1</version>
                 <extensions>true</extensions>
                 <configuration>
                     <productVersion>${jira.version}</productVersion>
@@ -121,7 +134,9 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>

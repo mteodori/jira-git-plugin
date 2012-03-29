@@ -14,7 +14,6 @@ import com.xiplink.jira.git.revisions.RevisionInfo;
 import org.apache.log4j.Logger;
 
 import com.atlassian.core.util.collection.EasyList;
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.action.IssueActionComparator;
 import com.atlassian.jira.issue.tabpanels.GenericMessageAction;
@@ -45,9 +44,12 @@ public class GitRevisionsTabPanel extends AbstractIssueTabPanel {
 			List<RevisionInfo> logEntries = revisionIndexer.getLogEntriesByRepository(issue);
 
 			// This is a bit of a hack to get the error message across
-			if (logEntries.size() == 0) {
-				GenericMessageAction action = new GenericMessageAction(getText("no.log.entries.message"));
-				return EasyList.build(action);
+            if (logEntries == null) {
+                GenericMessageAction action = new GenericMessageAction(getText("no.index.error.message"));
+                return EasyList.build(action);
+            } else if (logEntries.size() == 0) {
+                GenericMessageAction action = new GenericMessageAction(getText("no.log.entries.message"));
+                return EasyList.build(action);
 			} else {
 				List<IssueAction> actions = new ArrayList<IssueAction>(logEntries.size());
 				for (RevisionInfo entry : logEntries) {
@@ -65,8 +67,8 @@ public class GitRevisionsTabPanel extends AbstractIssueTabPanel {
 		return Collections.emptyList();
 	}
 
-    protected String getText(String key) {
-        return ComponentAccessor.getApplicationProperties().getText(key);
+    private String getText(String key) {
+        return descriptor.getI18nBean().getText(key);
     }
 
     public boolean showPanel(Issue issue, User remoteUser) {

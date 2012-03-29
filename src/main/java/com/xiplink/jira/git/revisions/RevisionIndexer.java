@@ -23,18 +23,14 @@ import com.xiplink.jira.git.GitManager;
 import com.xiplink.jira.git.MultipleGitRepositoryManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.*;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -43,19 +39,13 @@ import org.ofbiz.core.entity.GenericValue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RevisionIndexer {
 
     private static Logger log = Logger.getLogger(RevisionIndexer.class);
     private static final String REVISIONS_INDEX_DIRECTORY = "jira-git-revisions";
+
     // These are names of the fields in the Lucene documents that contain revision info.
     public static final String FIELD_REVISIONNUMBER = "revision";
     public static final String FIELD_MESSAGE = "message";
@@ -66,7 +56,11 @@ public class RevisionIndexer {
     public static final String FIELD_PROJECTKEY = "project";
     public static final String FIELD_REPOSITORY = "repository";
     public static final String FIELD_BRANCH = "branch";
+
+    public static final StandardAnalyzer ANALYZER = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_30);
+
     public static final int MAX_REVISIONS = 100;
+
     private final MultipleGitRepositoryManager multipleGitRepositoryManager;
     private final VersionManager versionManager;
     private final IssueManager issueManager;
@@ -131,7 +125,7 @@ public class RevisionIndexer {
         boolean indexExists = indexDirectoryExists();
         if (getIndexPath() != null && !indexExists) {
             try {
-                indexAccessor.getIndexWriter(getIndexPath(), true).close();
+                indexAccessor.getIndexWriter(getIndexPath(), true, ANALYZER).close();
                 return true;
             } catch (Exception e) {
                 log.error("Could not create the index directory for the Git plugin.", e);
@@ -273,7 +267,7 @@ public class RevisionIndexer {
 
         Collection<RevCommit> logEntries = gitManager.getLogEntries(latestIndexedRevision, branchId);
 
-        IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false);
+        IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false, ANALYZER);
 
         try {
             IndexReader reader = indexAccessor.getIndexReader(getIndexPath());
@@ -322,11 +316,11 @@ public class RevisionIndexer {
             repoAndRevQuery.add(branchQuery, BooleanClause.Occur.MUST);
             repoAndRevQuery.add(revQuery, BooleanClause.Occur.MUST);
 
-            Hits hits = searcher.search(repoAndRevQuery);
+            TopDocs hits = searcher.search(repoAndRevQuery, MAX_REVISIONS);
 
-            if (hits.length() == 1) {
+            if (hits.totalHits == 1) {
                 return true;
-            } else if (hits.length() == 0) {
+            } else if (hits.totalHits == 0) {
                 return false;
             } else {
                 log.error("Found MORE than one document for repository=" + repoId +
@@ -352,25 +346,25 @@ public class RevisionIndexer {
         Document doc = new Document();
 
         // revision information
-        doc.add(new Field(FIELD_MESSAGE, logEntry.getFullMessage(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        doc.add(new Field(FIELD_MESSAGE, logEntry.getFullMessage(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         if (logEntry.getAuthorIdent() != null) {
             doc.add(new Field(FIELD_AUTHOR, logEntry.getAuthorIdent().getName(), Field.Store.YES,
-                    Field.Index.UN_TOKENIZED));
+                    Field.Index.NOT_ANALYZED));
         }
         if (logEntry.getCommitterIdent() != null) {
             doc.add(new Field(FIELD_COMMITTER, logEntry.getCommitterIdent().getName(), Field.Store.YES,
-                    Field.Index.UN_TOKENIZED));
+                    Field.Index.NOT_ANALYZED));
         }
 
-        doc.add(new Field(FIELD_REPOSITORY, Long.toString(repoId), Field.Store.YES, Field.Index.UN_TOKENIZED));
-        doc.add(new Field(FIELD_REVISIONNUMBER, logEntry.getId().name(), Field.Store.YES, Field.Index.UN_TOKENIZED));
-        doc.add(new Field(FIELD_BRANCH, branchName, Field.Store.YES, Field.Index.UN_TOKENIZED));
+        doc.add(new Field(FIELD_REPOSITORY, Long.toString(repoId), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field(FIELD_REVISIONNUMBER, logEntry.getId().name(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field(FIELD_BRANCH, branchName, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
         if (logEntry.getCommitTime() > 0) {
             doc.add(new Field(FIELD_DATE,
                     DateTools.timeToString(logEntry.getCommitTime(), DateTools.Resolution.SECOND), Field.Store.YES,
-                    Field.Index.UN_TOKENIZED));
+                    Field.Index.NOT_ANALYZED));
         }
 
         // relevant issue keys
@@ -380,11 +374,11 @@ public class RevisionIndexer {
         Map<String, String> projects = new HashMap<String, String>();
 
         for (String issueKey : keys) {
-            doc.add(new Field(FIELD_ISSUEKEY, issueKey, Field.Store.YES, Field.Index.UN_TOKENIZED));
+            doc.add(new Field(FIELD_ISSUEKEY, issueKey, Field.Store.YES, Field.Index.NOT_ANALYZED));
             String projectKey = getProjectKeyFromIssueKey(issueKey);
             if (!projects.containsKey(projectKey)) {
                 projects.put(projectKey, projectKey);
-                doc.add(new Field(FIELD_PROJECTKEY, projectKey, Field.Store.YES, Field.Index.UN_TOKENIZED));
+                doc.add(new Field(FIELD_PROJECTKEY, projectKey, Field.Store.YES, Field.Index.NOT_ANALYZED));
             }
         }
 
@@ -431,11 +425,11 @@ public class RevisionIndexer {
             BooleanQuery query = new BooleanQuery();
             query.add(new TermQuery(new Term(FIELD_ISSUEKEY, key)), BooleanClause.Occur.MUST);
 
-            Hits hits = searcher.search(query);
-            List<RevisionInfo> logEntries = new ArrayList<RevisionInfo>(hits.length());
+            TopDocs hits = searcher.search(query, MAX_REVISIONS);
+            List<RevisionInfo> logEntries = new ArrayList<RevisionInfo>(hits.totalHits);
 
-            for (int i = 0; i < hits.length(); i++) {
-                Document doc = hits.doc(i);
+            for (int i = 0; i < Math.min(hits.totalHits, MAX_REVISIONS); i++) {
+                Document doc = searcher.doc(hits.scoreDocs[i].doc);
                 long repositoryId = Long.parseLong(doc.get(FIELD_REPOSITORY));
                 // repositoryId is UUID + location
                 GitManager manager = multipleGitRepositoryManager.getRepository(repositoryId);
@@ -511,7 +505,7 @@ public class RevisionIndexer {
 
         // Set up and perform a search for all documents having the supplied projectKey,sorted in descending date
         // order
-        Sort sort = new Sort(FIELD_DATE, true);
+        Sort sort = new Sort(new SortField(FIELD_DATE, SortField.LONG, true));
         Term term = new Term(FIELD_PROJECTKEY, projectKey);
         TermQuery query = new TermQuery(term);
 
@@ -519,17 +513,17 @@ public class RevisionIndexer {
         final IndexReader reader = indexAccessor.getIndexReader(getIndexPath());
         IndexSearcher searcher = new IndexSearcher(reader);
         try {
-            Hits hits = searcher.search(query, sort);
+            TopDocs hits = searcher.search(query, new ProjectRevisionFilter(issueManager, permissionManager, user, projectKey), MAX_REVISIONS, sort);
 
             if (hits == null) {
                 log.info("getLogEntriesByProject() No matches -- returning null.");
                 return null;
             }
             // Build the result map
-            logEntries = new ArrayList<RevisionInfo>(hits.length());
+            logEntries = new ArrayList<RevisionInfo>(hits.totalHits);
             int commitsEntered = 0;
-            for (int i = 0; i < hits.length() && i < MAX_REVISIONS && commitsEntered < numberOfEntries; i++) {
-                Document doc = hits.doc(i);
+            for (int i = 0; i < hits.totalHits && i < MAX_REVISIONS && commitsEntered < numberOfEntries; i++) {
+                Document doc = searcher.doc(hits.scoreDocs[i].doc);
                 String revision = doc.get(FIELD_REVISIONNUMBER);
 
                 // Get all the issue keys mentioned in the commit.
@@ -614,10 +608,10 @@ public class RevisionIndexer {
         }
 
         // Find all isuses affected by and fixed by any of the versions:
-        Collection<GenericValue> issues = new HashSet<GenericValue>();
+        Collection<Issue> issues = new HashSet<Issue>();
 
-        issues.addAll(versionManager.getFixIssues(version));
-        issues.addAll(versionManager.getAffectsIssues(version));
+        issues.addAll(versionManager.getIssuesWithFixVersion(version));
+        issues.addAll(versionManager.getIssuesWithAffectsVersion(version));
 
         // Construct a query with all the issue keys. Make sure to increase the maximum number of clauses if needed.
         int maxClauses = BooleanQuery.getMaxClauseCount();
@@ -625,11 +619,15 @@ public class RevisionIndexer {
             BooleanQuery.setMaxClauseCount(issues.size());
         }
         BooleanQuery query = new BooleanQuery();
+        Set<String> permittedIssueKeys = new HashSet<String>();
 
-        for (GenericValue issue : issues) {
-            String key = issue.getString(FIELD_ISSUEKEY);
-            TermQuery termQuery = new TermQuery(new Term(FIELD_ISSUEKEY, key));
-            query.add(termQuery, BooleanClause.Occur.SHOULD);
+        for (Issue issue : issues) {
+            if (permissionManager.hasPermission(Permissions.VIEW_VERSION_CONTROL, issue, user)) {
+                String key = issue.getKey();
+                TermQuery termQuery = new TermQuery(new Term(FIELD_ISSUEKEY, key));
+                query.add(termQuery, BooleanClause.Occur.SHOULD);
+                permittedIssueKeys.add(key);
+            }
         }
 
         final IndexReader reader = indexAccessor.getIndexReader(getIndexPath());
@@ -638,18 +636,18 @@ public class RevisionIndexer {
 
         try {
             // Run the query and sort by date in descending order
-            Sort sort = new Sort(FIELD_DATE, true);
-            Hits hits = searcher.search(query, sort);
+            Sort sort = new Sort(new SortField(FIELD_DATE, SortField.STRING, true));
+            TopDocs hits = searcher.search(query, new PermittedIssuesRevisionFilter(issueManager, permissionManager, user, permittedIssueKeys), MAX_REVISIONS, sort);
 
             if (hits == null) {
                 log.info("getLogEntriesByVersion() No matches -- returning null.");
                 return null;
             }
 
-            logEntries = new ArrayList<RevisionInfo>(hits.length());
+            logEntries = new ArrayList<RevisionInfo>(hits.totalHits);
             int commitsEntered = 0;
-            for (int i = 0; i < hits.length() && i < MAX_REVISIONS && commitsEntered < numberOfEntries; i++) {
-                Document doc = hits.doc(i);
+            for (int i = 0; i < hits.totalHits && i < MAX_REVISIONS && commitsEntered < numberOfEntries; i++) {
+                Document doc = searcher.doc(hits.scoreDocs[i].doc);
                 long repositoryId = Long.parseLong(doc.get(FIELD_REPOSITORY));
                 // repositoryId is UUID + location
                 GitManager manager = multipleGitRepositoryManager.getRepository(repositoryId);
@@ -717,7 +715,7 @@ public class RevisionIndexer {
         
         long repoId = gitInstance.getId();
 
-        final IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false);
+        final IndexWriter writer = indexAccessor.getIndexWriter(getIndexPath(), false, ANALYZER);
 
         try {
             writer.deleteDocuments(new Term(FIELD_REPOSITORY, Long.toString(repoId)));
