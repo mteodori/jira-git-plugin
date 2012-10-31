@@ -1,9 +1,50 @@
 <!-- Start of the git Project Tab -->
+<style type="text/css">
+.gitcommit h3 {
+	font-size: 15px;
+}
+
+.gitcommitmsg blockquote {
+background: #E0F0FF;
+border-left: 1px solid #C2D9EF;
+color: #222;
+font-style: normal;
+margin: 0;
+margin-bottom: .2em;
+overflow-x: auto;
+overflow-y: hidden;
+padding: .3em .7em .3em .7em;
+}
+
+.gitcommitchanges blockquote {
+background: #f9f9f9;
+border-left: 1px solid #eee;
+color: #222;
+font-style: normal;
+margin: 0;
+margin-bottom: .2em;
+overflow-x: auto;
+overflow-y: hidden;
+padding: .3em .7em .3em .7em;
+}
+
+.commit-header {
+border-top: 1px solid #EAEAEA;
+border-bottom: 1px solid #EAEAEA;
+padding: .2em .1em .2em .1em;
+margin-bottom: .5em;
+}
+
+.gitcommit strong {
+	color: #222;
+}
+</style>
 <div class="projectPanel">
+<!--
     <div class="header">
         <h3 class="formtitle">$i18n.getText("git.project-tab.header")</h3>
     </div>
-
+-->
     <!-- Header -->
     <table width="100%" class="versionBanner">
         <tr>
@@ -23,7 +64,7 @@
                             class="subText">$action.getText("common.concepts.releasenotes")</a> )</span>
                     </td>
                 #else
-                    <td class="formtitle" valign="top">
+                    <td valign="top">
                     <font size=3><b>
                     #if (!$versionNumber || $versionNumber == -1)
                         $i18n.getText("git.project-tab.all-versions")
@@ -90,32 +131,25 @@
     <!-- End of header -->
 
     <!-- The commit table -->
-    <table cellpadding="2" cellspacing="0" border="0" width="100%">
-        #if ($commits && $commits.size() > 0)
-            #foreach ($commit in $commits)
-
-                <tr>
-                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.repository")</b></td>
-                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.branch")</b></td>
-                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.revision")</b></td>
-                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.date")</b></td>
-                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.project-tab.user")</b></td>
-                    <td bgcolor="#f0f0f0"><b>$i18n.getText("git.project-tab.message")</b></td>
-                </tr>
-                <tr>
-                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.repositoryDisplayName</td>
-                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.branch</td>
-                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.linkRenderer.getRevisionLink($commit.revision)</td>
-                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.timePerformedFormatted</td>
-                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!{commit.revision.authorIdent.name} / $!{commit.revision.committerIdent.name}</td>
-                    <td bgcolor="#ffffff">#makelinkedhtml($commit.revision.getFullMessage().trim())</td>
-                </tr>
-                <tr>
-                    <td bgcolor="#f0f0f0"><b>$i18n.getText("git.project-tab.files-changed")</b></td>
-                </tr>
-                <tr>
-                    <td bgcolor="#ffffff">
-                        #foreach ($changePath in $commit.changedPaths)
+    #if ($commits && $commits.size() > 0)
+		#foreach ($commit in $commits)
+		<div class="module gitcommit">
+			<div class="mod-header">
+				#if ($commit.linkRenderer.getRevisionHref($commit.revision))
+			    <ul class="ops">
+			        <li><a class="icon icon-view" href="$commit.linkRenderer.getRevisionHref($commit.revision)" title="$i18n.getText("git.project-tab.browse")"><span>$i18n.getText("git.project-tab.browse")</span></a></li>
+			    </ul>
+			    #end
+			    <h3>$commit.timePerformedFormatted by ${commit.revision.authorIdent.name}</h3>
+			</div>
+			<div class="mod-content">
+			   <div class="commit-header"><b>$commit.revision.id.name</b> in <b>$commit.branch</b> on <b>$commit.repositoryDisplayName</b></div>
+			   <div>
+				   <div class="gitcommitmsg"><blockquote>
+				   	#makelinkedhtml($commit.revision.getFullMessage().trim())
+				   </blockquote></div>
+			   	   <div class="gitcommitchanges"><blockquote>
+				   #foreach ($changePath in $commit.changedPaths)
                             #if ($commit.isDeleted($changePath) == true)
                                 <font color="#990000" size="-2"><b title="Delete">$i18n.getText("git.project-tab.deleted")</b></font>
                             #elseif ($commit.isAdded($changePath) == true)
@@ -133,13 +167,16 @@
 
                             <br />
                         #end
-                    </td>
-                </tr>
-            #end
-        #else
-           <tr><td><p class="bluetext">$i18n.getText("git.project-tab.no-commits")</p></td></tr>
-        #end
-    </table>
+					</blockquote></div>
+			   </div>
+			</div>
+		</div>
+		#end
+	#else
+		<div class="aui-message info" style="margin-top: 10px;">
+			<span class="aui-icon icon-info"></span>$i18n.getText("git.project-tab.no-commits")
+		</div>
+	#end
     <!-- End of commit table -->
 </div>
 <!-- End of the git Project Tab -->
