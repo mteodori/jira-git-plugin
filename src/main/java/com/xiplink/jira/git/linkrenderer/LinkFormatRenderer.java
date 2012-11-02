@@ -1,21 +1,21 @@
 package com.xiplink.jira.git.linkrenderer;
 
-import com.atlassian.core.util.map.EasyMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 
+import com.atlassian.core.util.map.EasyMap;
 import com.xiplink.jira.git.FileDiff;
 import com.xiplink.jira.git.GitManager;
 import com.xiplink.jira.git.ViewLinkFormat;
 
-import java.util.Map;
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.jgit.lib.ObjectId;
-
 /**
  * A link renderer implementation which lets the user specify the format in the properties file, to accommodate various
  * formats (ViewCVS, Fisheye, etc) out there.
- * 
+ *
  * @author Chenggong Lu
  * @author Jeff Turner
  */
@@ -27,10 +27,14 @@ public class LinkFormatRenderer implements GitLinkRenderer {
     private String fileModifiedFormat;
     private String fileDeletedFormat;
     private String changesetFormat;
+	private String originPath;
+	private String originPathWithoutDotGit;
 
     public LinkFormatRenderer(GitManager gitManager) {
 
         ViewLinkFormat linkFormat = gitManager.getViewLinkFormat();
+        originPath = StringUtils.substringAfterLast(gitManager.getOrigin(), ":");
+        originPathWithoutDotGit = StringUtils.removeEnd(originPath, ".git");
 
         if (linkFormat != null) {
             if (StringUtils.isNotBlank(linkFormat.getChangesetFormat())) {
@@ -66,12 +70,17 @@ public class LinkFormatRenderer implements GitLinkRenderer {
         return getRevisionLink(revision.getId().getName());
     }
 
+    public String getRevisionHref(RevCommit revision) {
+        return getRevisionHref(revision.getId().getName());
+    }
+
     public String getChangePathLink(RevCommit revision, FileDiff path) {
+
+        //TODO: Remove Parent
         Map<String, String> subst = EasyMap.build(
                 "${num}", Integer.toString(path.getNumber()),
                 "${rev}", revision.getId().name(),
-                "${path}", path.getPath(),
-                "${parent}", revision.getParent(0).getId().name()
+                "${path}", path.getPath()
         );
 
         ObjectId[] blobs = path.getBlobs();
@@ -81,6 +90,8 @@ public class LinkFormatRenderer implements GitLinkRenderer {
             subst.put("${blob}", blobs[1].name());
             subst.put("${parent_blob}", blobs[0].name());
         }
+        subst.put("${originPath}", originPath);
+        subst.put("${originPathWithoutDotGit}", originPathWithoutDotGit);
 
         String format;
         switch (path.getChange()) {
@@ -106,8 +117,21 @@ public class LinkFormatRenderer implements GitLinkRenderer {
         }
 
         String href = StringUtils.replace(changesetFormat, "${rev}", revisionNumber);
+        href = StringUtils.replace(href, "${originPath}", originPath);
+        href = StringUtils.replace(href, "${originPathWithoutDotGit}", originPathWithoutDotGit);
         String shortRevNumber = revisionNumber.substring(0, 7);
-        return "<a href=\"" + href + "\">" + shortRevNumber + "...</a>";
+        return "<a href=\"" + href + "\" title='"+revisionNumber+"'>" + shortRevNumber + "...</a>";
+    }
+
+    protected String getRevisionHref(String revisionNumber) {
+        if (changesetFormat == null) {
+            return null;
+        }
+        String href = StringUtils.replace(changesetFormat, "${rev}", revisionNumber);
+        href = StringUtils.replace(href, "${originPath}", originPath);
+        href = StringUtils.replace(href, "${originPathWithoutDotGit}", originPathWithoutDotGit);
+
+        return href;
     }
 
     private String formatLink(String format, String path, Map<String, String> substitutions) {

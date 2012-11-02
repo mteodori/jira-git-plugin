@@ -29,7 +29,12 @@ public class NullLinkRenderer implements GitLinkRenderer
 
     public String getCopySrcLink(RevCommit revision, FileDiff logEntryPath)
     {
-        return logEntryPath//.getCopyPath() 
+        return logEntryPath//.getCopyPath()
         + " #" + logEntryPath;//.getCopyRevision();
     }
+
+	public String getRevisionHref(RevCommit revision) {
+		return null;
+	}
+
 }

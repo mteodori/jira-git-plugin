@@ -15,8 +15,10 @@ import com.xiplink.jira.git.FileDiff;
 public interface GitLinkRenderer
 {
     String getRevisionLink(RevCommit revision);
+    String getRevisionHref(RevCommit revision);
 
     String getChangePathLink(RevCommit revision, FileDiff changePath);
 
     public String getCopySrcLink(RevCommit revision, FileDiff changePath);
+
 }

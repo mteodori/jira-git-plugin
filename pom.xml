@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xiplink.jira.git</groupId>
     <artifactId>jira-git-plugin</artifactId>
-    <version>0.6.1-SNAPSHOT</version>
+    <version>0.6.4.5-SNAPSHOT</version>
 
     <name>JIRA Git plugin</name>
     <packaging>atlassian-plugin</packaging>
@@ -84,6 +84,16 @@
             <organization>Reliadev</organization>
             <organizationUrl>http://www.reliadev.com</organizationUrl>
         </developer>
+        <developer>
+                    <name>Marcello Teodori</name>
+                    <organization></organization>
+                    <organizationUrl></organizationUrl>
+        </developer>
+        <developer>
+            <name>Daniel Gomes</name>
+            <organization>Comut Technologies</organization>
+            <organizationUrl>http://www.com-ut.com</organizationUrl>
+        </developer>
     </developers>
 
     <scm>
@@ -108,10 +118,6 @@
         <repository>
             <id>atlassian-public-repository</id>
             <url>http://maven.atlassian.com/repository/public</url>
-        </repository>
-        <repository>
-            <id>jgit-repository</id>
-            <url>http://download.eclipse.org/jgit/maven</url>
         </repository>
     </repositories>
     <pluginRepositories>

@@ -35,7 +35,7 @@
 
     <resource type="i18n" name="i18n" location="com.xiplink.jira.git.action.GitActionSupport" />
 
-    <web-item key="git-repositories-link" name="Git Repositories Link on Administrators Page" section="system.admin/globalsettings" weight="95">
+	<web-item key="git-repositories-link" name="Git Repositories Link on Administrators Page" section="admin_plugins_menu/source_control" weight="95">
         <label key="git.repositories" />
         <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
             <param name="permission">admin</param>

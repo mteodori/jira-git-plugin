@@ -1,45 +1,78 @@
-<table cellpadding="2" cellspacing="0" border="0" width="100%">
-<tr>
-    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.repository")</b></td>
-    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.branch")</b></td>
-    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.revision")</b></td>
-    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.date")</b></td>
-    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.user")</b></td>
-    <td bgcolor="#f0f0f0"><b>$i18n.getText("git.issue-tab.message")</b></td>
-</tr>
-<tr>
-    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.repositoryDisplayName</td>
-    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.branch</td>
-    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.linkRenderer.getRevisionLink($git.revision)</td>
-    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.timePerformedFormatted</td>
-    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!{git.revision.authorIdent.name} / $!{git.revision.committerIdent.name}</td>
-    <td bgcolor="#ffffff">#makelinkedhtml($git.revision.getFullMessage().trim())</td>
-</tr>
-<tr>
-    <td bgcolor="#f0f0f0"><b>$i18n.getText("git.issue-tab.files-changed")</b></td>
-</tr>
-<tr>
-    <td bgcolor="#ffffff">
-            #foreach ($changePath in $git.changedPaths)
-                #if ($git.isDeleted($changePath) == true)
-                    <font color="#990000" size="-2"><b title="Delete">$i18n.getText("git.issue-tab.deleted")</b></font>
-                #elseif ($git.isAdded($changePath) == true)
-                    <font color="#009900" size="-2"><b title="Add">$i18n.getText("git.issue-tab.added")</b></font>
-                #elseif ($git.isModified($changePath) == true)
-                    <font color="#999933" size="-2"><b title="Modify">$i18n.getText("git.issue-tab.modified")</b></font>
-                #else
-                    $changePath.change
-                #end
-                $git.linkRenderer.getChangePathLink($git.revision, $changePath)
+<style type="text/css">
+.gitcommit h3 {
+	font-size: 15px;
+}
+.gitcommitmsg blockquote {
+background: #E0F0FF;
+border-left: 1px solid #C2D9EF;
+color: #222;
+font-style: normal;
+margin: 0;
+margin-bottom: .2em;
+overflow-x: auto;
+overflow-y: hidden;
+padding: .3em .7em .3em .7em;
+}
 
-                #if ($changePath.copyPath)
-                    (from $git.linkRenderer.getCopySrcLink($git.revision, $changePath))
-                #end
+.gitcommitchanges blockquote {
+background: #f9f9f9;
+border-left: 1px solid #eee;
+color: #222;
+font-style: normal;
+margin: 0;
+margin-bottom: .2em;
+overflow-x: auto;
+overflow-y: hidden;
+padding: .3em .7em .3em .7em;
+}
 
-                <br>
-            #end
-    </td>
-</tr>
-</table>
+.commit-header {
+border-top: 1px solid #EAEAEA;
+border-bottom: 1px solid #EAEAEA;
+padding: .2em .1em .2em .1em;
+margin-bottom: .5em;
+}
 
-<br>
+.gitcommit strong {
+	color: #222;
+}
+</style>
+
+		<div class="module gitcommit">
+			<div class="mod-header">
+				#if ($git.linkRenderer.getRevisionHref($git.revision))
+			    <ul class="ops">
+			        <li><a class="icon icon-view" href="$git.linkRenderer.getRevisionHref($git.revision)" title="$i18n.getText("git.project-tab.browse")"><span>$i18n.getText("git.project-tab.browse")</span></a></li>
+			    </ul>
+			    #end
+			    <h3>$git.timePerformedFormatted by ${git.revision.authorIdent.name}</h3>
+			</div>
+			<div class="mod-content">
+			   <div class="commit-header"><b>$git.revision.id.name</b> in <b>$git.branch</b> on <b>$git.repositoryDisplayName</b></div>
+			   <div>
+				   <div class="gitcommitmsg"><blockquote>
+				   	#makelinkedhtml($git.revision.getFullMessage().trim())
+				   </blockquote></div>
+			   	   <div class="gitcommitchanges"><blockquote>
+				   #foreach ($changePath in $git.changedPaths)
+                            #if ($git.isDeleted($changePath) == true)
+                                <font color="#990000" size="-2"><b title="Delete">$i18n.getText("git.project-tab.deleted")</b></font>
+                            #elseif ($git.isAdded($changePath) == true)
+                                <font color="#009900" size="-2"><b title="Add">$i18n.getText("git.project-tab.added")</b></font>
+                            #elseif ($git.isModified($changePath) == true)
+                                <font color="#999933" size="-2"><b title="Modify">$i18n.getText("git.project-tab.modified")</b></font>
+                            #else
+                                $changePath.change
+                            #end
+                            $git.linkRenderer.getChangePathLink($git.revision, $changePath)
+
+                            #if ($changePath.copyPath)
+                                (from $git.linkRenderer.getCopySrcLink($git.revision, $changePath))
+                            #end
+
+                            <br />
+                        #end
+					</blockquote></div>
+			   </div>
+			</div>
+		</div>
