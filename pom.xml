@@ -10,6 +10,7 @@
     <packaging>atlassian-plugin</packaging>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jira.version>5.0.1</jira.version>
         <jira.data.version>5.0.1</jira.data.version>
     </properties>
