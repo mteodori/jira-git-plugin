@@ -1,3 +1,5 @@
+#enable_html_escaping()
+
 <table cellpadding="2" cellspacing="0" border="0" width="100%">
 <tr>
     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.repository")</b></td>
