@@ -93,6 +93,12 @@ public class GitRevisionAction extends AbstractIssueAction {
         return multipleGitRepositoryManager.getRepository(repoId).getFileDiffs(revision.getId().name());
     }
 
+    public String getLinkedLogMessageHtml() {
+        // Name ends in Html to avoid HTML escaping
+        // https://developer.atlassian.com/display/JIRADEV/Velocity+Templates
+        return JiraKeyUtils.linkBugKeys(revision.getFullMessage().trim());
+    }
+
     /**
      * Converts all lower case JIRA issue keys to upper case so that they can be
      * correctly rendered in the Velocity macro, makelinkedhtml.

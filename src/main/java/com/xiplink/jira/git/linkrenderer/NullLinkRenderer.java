@@ -17,17 +17,17 @@ import com.xiplink.jira.git.FileDiff;
  */
 public class NullLinkRenderer implements GitLinkRenderer
 {
-    public String getRevisionLink(RevCommit revision)
+    public String getRevisionLinkHtml(RevCommit revision)
     {
         return revision.getId().toString();
     }
 
-    public String getChangePathLink(RevCommit revision, FileDiff logEntryPath)
+    public String getChangePathLinkHtml(RevCommit revision, FileDiff logEntryPath)
     {
         return logEntryPath.getPath();
     }
 
-    public String getCopySrcLink(RevCommit revision, FileDiff logEntryPath)
+    public String getCopySrcLinkHtml(RevCommit revision, FileDiff logEntryPath)
     {
         return logEntryPath//.getCopyPath() 
         + " #" + logEntryPath;//.getCopyRevision();

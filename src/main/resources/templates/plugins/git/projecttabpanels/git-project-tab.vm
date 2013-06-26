@@ -105,10 +105,10 @@
                 <tr>
                     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.repositoryDisplayName</td>
                     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.branch</td>
-                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.linkRenderer.getRevisionLink($commit.revision)</td>
+                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.linkRenderer.getRevisionLinkHtml($commit.revision)</td>
                     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.timePerformedFormatted</td>
                     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!{commit.revision.authorIdent.name} / $!{commit.revision.committerIdent.name}</td>
-                    <td bgcolor="#ffffff">#makelinkedhtml($commit.revision.getFullMessage().trim())</td>
+                    <td bgcolor="#ffffff">$commit.getLinkedLogMessageHtml()</td>
                 </tr>
                 <tr>
                     <td bgcolor="#f0f0f0"><b>$i18n.getText("git.project-tab.files-changed")</b></td>
@@ -125,10 +125,10 @@
                             #else
                                 $changePath.change
                             #end
-                            $commit.linkRenderer.getChangePathLink($commit.revision, $changePath)
+                            $commit.linkRenderer.getChangePathLinkHtml($commit.revision, $changePath)
 
                             #if ($changePath.copyPath)
-                                (from $commit.linkRenderer.getCopySrcLink($commit.revision, $changePath))
+                                (from $commit.linkRenderer.getCopySrcLinkHtml($commit.revision, $changePath))
                             #end
 
                             <br />
