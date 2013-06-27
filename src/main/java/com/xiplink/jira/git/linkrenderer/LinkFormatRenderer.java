@@ -56,17 +56,17 @@ public class LinkFormatRenderer implements GitLinkRenderer {
     }
 
     // TODO
-    public String getCopySrcLink(RevCommit revision, FileDiff path) {
+    public String getCopySrcLinkHtml(RevCommit revision, FileDiff path) {
         return formatLink(pathLinkFormat, path.getPath(), EasyMap.build(
                 "${rev}", revision.getId().name(),
                 "${path}", path.getPath()));
     }
 
-    public String getRevisionLink(RevCommit revision) {
+    public String getRevisionLinkHtml(RevCommit revision) {
         return getRevisionLink(revision.getId().getName());
     }
 
-    public String getChangePathLink(RevCommit revision, FileDiff path) {
+    public String getChangePathLinkHtml(RevCommit revision, FileDiff path) {
         Map<String, String> subst = EasyMap.build(
                 "${num}", Integer.toString(path.getNumber()),
                 "${rev}", revision.getId().name(),
