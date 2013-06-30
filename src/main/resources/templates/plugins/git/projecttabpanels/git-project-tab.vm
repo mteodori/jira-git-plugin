@@ -16,13 +16,13 @@
                     <td class="colHeaderLink" align="left">
                         <font size="3">
                           <a href="$req.contextPath/secure/IssueNavigator.jspa?reset=true&pid=$project.id&fixfor=$selectedVersion.id"
-                             title="$action.getText("browseproject.getmoreinfo")">
+                             title="$i18n.getText("browseproject.getmoreinfo")">
                         <b><u>$selectedVersion.name</u></b></a></font>
                         <span class="noWrap">(#if ($selectedVersion.releaseDate)
                             #versionReleaseDate($versionManager $selectedVersion) |
                         #end
                         <a href="$req.contextPath/secure/ReleaseNote.jspa?projectId=$project.id&styleName=Html&version=$selectedVersion.id"
-                            class="subText">$action.getText("common.concepts.releasenotes")</a> )</span>
+                            class="subText">$i18n.getText("common.concepts.releasenotes")</a> )</span>
                     </td>
                 #else
                     <td class="formtitle" valign="top">
