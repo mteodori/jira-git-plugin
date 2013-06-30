@@ -1,3 +1,5 @@
+#enable_html_escaping()
+
 <tr>
  	<td colspan="2" class="formErrors">
  		<div class="errorArea">

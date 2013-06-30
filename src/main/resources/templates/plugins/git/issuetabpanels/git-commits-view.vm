@@ -1,3 +1,5 @@
+#enable_html_escaping()
+
 <table cellpadding="2" cellspacing="0" border="0" width="100%">
 <tr>
     <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("git.issue-tab.repository")</b></td>
@@ -10,10 +12,10 @@
 <tr>
     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.repositoryDisplayName</td>
     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.branch</td>
-    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.linkRenderer.getRevisionLink($git.revision)</td>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.linkRenderer.getRevisionLinkHtml($git.revision)</td>
     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$git.timePerformedFormatted</td>
     <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!{git.revision.authorIdent.name} / $!{git.revision.committerIdent.name}</td>
-    <td bgcolor="#ffffff">#makelinkedhtml($git.revision.getFullMessage().trim())</td>
+    <td bgcolor="#ffffff">$git.getLinkedLogMessageHtml()</td>
 </tr>
 <tr>
     <td bgcolor="#f0f0f0"><b>$i18n.getText("git.issue-tab.files-changed")</b></td>
@@ -30,10 +32,10 @@
                 #else
                     $changePath.change
                 #end
-                $git.linkRenderer.getChangePathLink($git.revision, $changePath)
+                $git.linkRenderer.getChangePathLinkHtml($git.revision, $changePath)
 
                 #if ($changePath.copyPath)
-                    (from $git.linkRenderer.getCopySrcLink($git.revision, $changePath))
+                    (from $git.linkRenderer.getCopySrcLinkHtml($git.revision, $changePath))
                 #end
 
                 <br>
