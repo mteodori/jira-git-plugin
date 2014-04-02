@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.atlassian.velocity.htmlsafe.HtmlSafe;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -93,6 +94,7 @@ public class GitRevisionAction extends AbstractIssueAction {
         return multipleGitRepositoryManager.getRepository(repoId).getFileDiffs(revision.getId().name());
     }
 
+	@HtmlSafe
     public String getLinkedLogMessageHtml() {
         // Name ends in Html to avoid HTML escaping
         // https://developer.atlassian.com/display/JIRADEV/Velocity+Templates

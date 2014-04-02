@@ -18,7 +18,7 @@ public class RepoTest {
         }
 
         Repository repository = builder.build();
-        System.out.println(repository.getObjectsDirectory().exists());
+        System.out.println(repository.getObjectDatabase().exists());
 
         repository.scanForRepoChanges();
         for(Map.Entry<String, Ref> pair : repository.getAllRefs().entrySet()) {
