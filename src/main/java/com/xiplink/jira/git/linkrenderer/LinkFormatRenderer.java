@@ -70,10 +70,13 @@ public class LinkFormatRenderer implements GitLinkRenderer {
         Map<String, String> subst = EasyMap.build(
                 "${num}", Integer.toString(path.getNumber()),
                 "${rev}", revision.getId().name(),
-                "${path}", path.getPath(),
-                "${parent}", revision.getParent(0).getId().name()
+                "${path}", path.getPath()
         );
-
+	
+	if (revision.getParentCount() > 0) {
+	    subst.put("${parent}", revision.getParent(0).getId().name());
+	}
+	    
         ObjectId[] blobs = path.getBlobs();
         if (blobs.length == 1) {
             subst.put("${blob}", blobs[0].name());
