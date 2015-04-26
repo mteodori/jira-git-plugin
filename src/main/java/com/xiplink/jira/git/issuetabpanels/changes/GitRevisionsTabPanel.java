@@ -45,10 +45,10 @@ public class GitRevisionsTabPanel extends AbstractIssueTabPanel {
 
 			// This is a bit of a hack to get the error message across
             if (logEntries == null) {
-                GenericMessageAction action = new GenericMessageAction(getText("no.index.error.message"));
+                IssueAction action = new GenericMessageAction(getText("no.index.error.message"));
                 return EasyList.build(action);
             } else if (logEntries.size() == 0) {
-                GenericMessageAction action = new GenericMessageAction(getText("no.log.entries.message"));
+                IssueAction action = new GenericMessageAction(getText("no.log.entries.message"));
                 return EasyList.build(action);
 			} else {
 				List<IssueAction> actions = new ArrayList<IssueAction>(logEntries.size());
